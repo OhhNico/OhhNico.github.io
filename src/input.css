@@ -1,0 +1,283 @@
+/* Tailwind source for ohhnico.github.io.
+   Build with `npm run build`, which writes style.css. style.css is committed and
+   is the only stylesheet the page loads. Nothing here is fetched at runtime:
+   no CDN, no remote webfont, no remote asset. The site this replaces went down
+   with an expired domain, so a third party host in the critical path is the one
+   failure mode worth designing out. The two font files are same-origin, which is
+   the same guarantee style.css itself has. */
+
+/* Tailwind's layers, imported by hand and without preflight. Preflight exists to
+   normalise form controls this page does not have, and it is the only thing in
+   the bundle that emits a colour outside the seven tokens (a transparent #0000
+   on button and input). The reset below covers what the page actually uses. */
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+@source "../index.html";
+
+/* Touch browsers fire :hover on tap and leave it stuck. Gate every hover state
+   behind a real pointer. This redefines Tailwind's built in hover variant, so
+   every `hover:` utility in the markup inherits the guard. */
+@custom-variant hover {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      @slot;
+    }
+  }
+}
+
+/* Self-hosted, latin subset, one variable file per family.
+   Google serves a single variable woff2 per family per subset, so asking for
+   400/700/900 separately would have downloaded the same bytes three times. One
+   file each: Archivo 35 KB, Space Grotesk 22 KB. Both are SIL Open Font
+   License 1.1; the licence text ships next to the files in fonts/.
+
+   font-display: swap, because the fallback stack below is a real grotesque and
+   a first paint in it is better than a blank heading. The unicode-range is the
+   one Google declares for this subset, kept verbatim: it is documentation of
+   what the file actually contains, and it makes any character added outside
+   latin fall back to the system face instead of rendering tofu. */
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 100 900;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("fonts/archivo-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("fonts/space-grotesk-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@theme {
+  /* Drop Tailwind's default palette. The page ships seven colour roles and
+     nothing else, so an unused red-500 has no business in the output. */
+  --color-*: initial;
+
+  --color-accent: #6D28D9;
+  --color-bg: #FFFFFF;
+  --color-surface: #F8F6FC;
+  --color-border: #DFDAEA;
+  --color-text: #16131F;
+  --color-heading: #16131F;
+  --color-muted: #5F5A6E;
+
+  /* Not an eighth colour. It is the name for "the ink that goes on an accent
+     fill", and it resolves to the same value as --color-bg in both modes. The
+     role needs its own name because the one place accent becomes a surface is
+     the Email button, and a token called `bg` used as a foreground reads as a
+     mistake six months from now. #FFFFFF on #6D28D9 is 5.02:1. */
+  --color-accent-ink: #FFFFFF;
+
+  /* Two roles, two faces. Archivo is a grotesque with a real 900 that holds its
+     counters at 240px, which is what the name needs. Space Grotesk carries text
+     and labels, where its narrower forms and odd terminals do the work that a
+     system stack cannot. System fallbacks stay in both stacks so a blocked or
+     failed font request degrades to something with the same proportions rather
+     than to Times. */
+  --font-display: "Archivo", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* Quintic ease out. The browser default is too weak to read as intentional:
+     this one moves immediately and settles, which is what makes a press feel
+     answered rather than delayed. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Dark is a media query, not a class. There is no switcher on this page, so
+   these seven overrides are the entire theme. Unlayered, so they beat the
+   values @theme emits into the theme layer. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-accent: #A78BFA;
+    --color-bg: #12101A;
+    --color-surface: #1B1826;
+    --color-border: #2A2536;
+    --color-text: #CBC7D6;
+    --color-heading: #F3F0FA;
+    --color-muted: #8F8AA0;
+    /* Tracks --color-bg, same as in light. #12101A on #A78BFA is 8.81:1. */
+    --color-accent-ink: #12101A;
+  }
+
+  /* Light type on a dark field optically reads a weight lighter. Give it room. */
+  body {
+    line-height: 1.74;
+  }
+
+  /* The same optical debt at display scale, paid the other way. A 900 at 240px
+     on a dark field blooms; pulling a hair of tracking back keeps the counters
+     of "Rengifo" open instead of letting the g and the o close up. */
+  h1 {
+    letter-spacing: -0.045em;
+  }
+}
+
+/* Deliberately transform only, with no opacity ramp.
+
+   The obvious version of this entrance fades from opacity 0. It also ships a
+   blank page to anything that captures the first painted frame: headless
+   screenshots, link unfurl bots, print. Verified, not assumed: the fading
+   build rendered an empty page under `chrome --headless --screenshot`. So the
+   content is visible from the first frame and the motion is the enhancement
+   on top, never the thing that grants visibility. The same reasoning rules out
+   the masked line reveal this hero is begging for, since an overflow clip hides
+   the name on frame one exactly the way opacity 0 does. */
+@keyframes rise {
+  from {
+    transform: translate3d(0, var(--rise-y, 10px), 0);
+  }
+}
+
+/* One entrance, played once, on a page nobody scrolls twice. Six beats of 40ms
+   carry the eye from the masthead down to the footer and then get out of the
+   way; the whole of <main> is one beat rather than one per row, because a grid
+   that staggers its own cells is the animate-everything tell. Total settle is
+   520ms wall clock, 280ms per element. Nothing here animates on scroll, on
+   hover per cell, or on any repeat visit. The name gets a longer throw than the
+   rest (22px against 10px) because at 240px a 10px rise is not perceptible. */
+@utility rise {
+  animation: rise 280ms var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1)) both;
+}
+
+/* The measure. Everything on the page sits inside one of these, including the
+   full-bleed Currently band, whose surface colour runs to the viewport edge
+   while its content stays on the same left edge as every other section. */
+@utility shell {
+  width: 100%;
+  max-width: 96rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* The section device, and the only ornament on the page: a 3px rule across the
+   measure with the first few centimetres of it in amber. It is one element, it
+   carries no text, and it is what makes four sections read as an index rather
+   than as four paragraphs that happen to be far apart. */
+@utility rule-top {
+  position: relative;
+  border-block-start: 3px solid var(--color-border);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset-block-start: -3px;
+    inset-inline-start: 0;
+    inline-size: clamp(3.5rem, 8vw, 7rem);
+    block-size: 3px;
+    background-color: var(--color-accent);
+  }
+}
+
+@layer base {
+  :root {
+    /* One gutter for the whole page, so the masthead rule, the name, the grid
+       lines and the footer all start on the same vertical. */
+    --gutter: clamp(1.25rem, 5vw, 4.5rem);
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  /* `clip`, never `hidden`. `hidden` would make the root a scroll container,
+     which kills position: sticky on descendants and can trap focus. With a
+     17vw heading on the page this guard is no longer theoretical. */
+  html,
+  body {
+    overflow-x: clip;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    color-scheme: light dark;
+  }
+
+  body,
+  h1,
+  h2,
+  h3,
+  p,
+  dl,
+  dt,
+  dd,
+  ul,
+  li {
+    margin: 0;
+    padding: 0;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-size: inherit;
+    font-weight: inherit;
+
+    /* "Multi-tenant" and "GrapesJS" only offer the engine a break at the hyphen.
+       At 320px that is not enough, and a heading that pushes the viewport is
+       worse than one that breaks mid-word. min-width: 0 stops a heading inside
+       a grid track from claiming its longest word as a minimum. */
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+
+  ul {
+    list-style: none;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* The one state on the page that must never be animated or delayed. Three
+     pixels rather than two, because the elements it lands on are now large
+     enough that a hairline ring reads as a rendering artefact. */
+  :focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 4px;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+  }
+}
+
+/* Unlayered, so it outranks every utility. Movement goes; opacity and colour
+   stay, because those are what carry the meaning. */
+@media (prefers-reduced-motion: reduce) {
+  /* The entrance is pure movement, so it goes. Content was already visible
+     without it, which is the whole point of building it that way. */
+  .rise {
+    animation: none;
+  }
+
+  /* Strips transform, translate and scale out of every transition on the page
+     while leaving opacity and colour in, so hover and press still answer. */
+  *,
+  *::before,
+  *::after {
+    transition-property: opacity, color, background-color, border-color, outline-color, text-decoration-color !important;
+    transition-duration: 160ms !important;
+
+    /* Removing the transition alone is not enough. Tailwind compiles
+       `hover:-translate-y-0.5` and `active:scale-[0.97]` to the standalone
+       `translate` and `scale` properties, which would still snap into place
+       untransitioned: instant movement is still movement. Cancel the values,
+       not just their timing. The button keeps its colour and its focus ring. */
+    translate: none !important;
+    scale: none !important;
+    rotate: none !important;
+  }
+}
