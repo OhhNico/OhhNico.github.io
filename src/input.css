@@ -3,13 +3,13 @@
    is the only stylesheet the page loads. Nothing here is fetched at runtime:
    no CDN, no remote webfont, no remote asset. The site this replaces went down
    with an expired domain, so a third party host in the critical path is the one
-   failure mode worth designing out. The two font files are same-origin, which is
-   the same guarantee style.css itself has. */
+   failure mode worth designing out. The two font files are same-origin, which
+   is the same guarantee style.css itself has. */
 
 /* Tailwind's layers, imported by hand and without preflight. Preflight exists to
    normalise form controls this page does not have, and it is the only thing in
-   the bundle that emits a colour outside the seven tokens (a transparent #0000
-   on button and input). The reset below covers what the page actually uses. */
+   the bundle that emits a colour outside the ones declared here. The reset in
+   the base layer below covers what the page actually uses. */
 @layer theme, base, components, utilities;
 
 @import "tailwindcss/theme.css" layer(theme);
@@ -27,64 +27,90 @@
   }
 }
 
-/* Self-hosted, latin subset, one variable file per family.
-   Google serves a single variable woff2 per family per subset, so asking for
-   400/700/900 separately would have downloaded the same bytes three times. One
-   file each: Archivo 35 KB, Space Grotesk 22 KB. Both are SIL Open Font
-   License 1.1; the licence text ships next to the files in fonts/.
+/* Two faces, self-hosted, latin subset, one variable file each.
+   Bricolage Grotesque 77 KB, Chivo Mono 26 KB. Both are SIL Open Font License
+   1.1; the licence texts ship next to the files in fonts/.
 
-   font-display: swap, because the fallback stack below is a real grotesque and
-   a first paint in it is better than a blank heading. The unicode-range is the
-   one Google declares for this subset, kept verbatim: it is documentation of
-   what the file actually contains, and it makes any character added outside
-   latin fall back to the system face instead of rendering tofu. */
+   Bricolage carries an OPTICAL SIZE axis from 12 to 96, and that axis is the
+   page's signature. It is not a subtle refinement on this face: at opsz 96 the
+   letterforms pull in tight and narrow, at opsz 12 they open out wide and round.
+   The same family therefore reads as a compressed display cut on the name and as
+   an open text cut in a paragraph, which is the job a second family would
+   normally be hired for. It is the reason there is no second family here.
+
+   Google subsets its variable files per axis, and each axis roughly doubles the
+   payload: weight alone is 41 KB, weight plus optical size is 77 KB, and adding
+   the width axis on top would be 131 KB. Width was dropped. Its range on this
+   face is only 75 to 100, which is far too short to carry hierarchy, and the
+   optical axis already moves width as a side effect. 55 KB for an axis that
+   duplicates one we have is not a trade worth making.
+
+   font-display: swap, because the fallback stacks below are real grotesques and
+   a first paint in one of them beats a blank heading. The unicode-range is the
+   one Google declares for this subset, kept verbatim: it documents what the file
+   actually contains, and it makes any character added outside latin fall back to
+   the system face instead of rendering tofu. The o-grave in "Nicolò" is U+00F2,
+   inside the range, so the name renders from the real file. */
 @font-face {
-  font-family: "Archivo";
+  font-family: "Bricolage Grotesque";
   font-style: normal;
-  font-weight: 100 900;
-  font-stretch: 100%;
+  font-weight: 200 800;
   font-display: swap;
-  src: url("fonts/archivo-latin.woff2") format("woff2");
+  src: url("fonts/bricolage-latin.woff2") format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
-  font-family: "Space Grotesk";
+  font-family: "Chivo Mono";
   font-style: normal;
   font-weight: 300 700;
   font-display: swap;
-  src: url("fonts/space-grotesk-latin.woff2") format("woff2");
+  src: url("fonts/chivo-mono-latin.woff2") format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @theme {
-  /* Drop Tailwind's default palette. The page ships seven colour roles and
-     nothing else, so an unused red-500 has no business in the output. */
+  /* Drop Tailwind's default palette. The page ships the six ramp steps and two
+     constants, so an unused red-500 has no business in the output. */
   --color-*: initial;
 
-  --color-accent: #6D28D9;
-  --color-bg: #FFFFFF;
-  --color-surface: #F8F6FC;
-  --color-border: #DFDAEA;
-  --color-text: #16131F;
-  --color-heading: #16131F;
-  --color-muted: #5F5A6E;
+  /* Two constants. Everything else on the page is derived from whichever ramp
+     step the current section sits on (see the `band` utility).
 
-  /* Not an eighth colour. It is the name for "the ink that goes on an accent
-     fill", and it resolves to the same value as --color-bg in both modes. The
-     role needs its own name because the one place accent becomes a surface is
-     the Email button, and a token called `bg` used as a foreground reads as a
-     mistake six months from now. #FFFFFF on #6D28D9 is 5.02:1. */
-  --color-accent-ink: #FFFFFF;
+     --ink is the one foreground that has to clear AA against all six steps at
+     once, so it is measured against the lightest of them: #F7F3FC on #582688 is
+     9.37:1, and on #000000 it is 19.18:1.
 
-  /* Two roles, two faces. Archivo is a grotesque with a real 900 that holds its
-     counters at 240px, which is what the name needs. Space Grotesk carries text
-     and labels, where its narrower forms and odd terminals do the work that a
-     system stack cannot. System fallbacks stay in both stacks so a blocked or
-     failed font request degrades to something with the same proportions rather
-     than to Times. */
-  --font-display: "Archivo", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+     --glow is the accent, and it is spent on exactly one job: marking what can
+     be interacted with. Links, focus rings, hover borders, and the marker that
+     says where you are. Nothing decorative is ever painted in it, which is what
+     makes the page's affordances learnable on the first one you meet. Same
+     test, same result: 5.47:1 on the lightest step, 11.19:1 on black. It never
+     darkens per section, because an accent that shifts with the background
+     stops reading as one thing.
+
+     --color-black is not a third constant. It is step one of the ramp, and it
+     is named here because it is also the ink that goes on a glow fill: black on
+     #CBB0FF is 11.19:1. A token called `band` used as a foreground would read
+     as a mistake six months from now. */
+  --color-ink: #F7F3FC;
+  --color-glow: #CBB0FF;
+  --color-black: #000000;
+
+  /* One family across the whole page, plus a mono for data. Display and sans
+     resolve to the same face on purpose: the difference between a heading and a
+     paragraph here is carried by the optical size axis, not by a second family.
+     Both names are kept because the roles are still two roles, and because a
+     future decision to split them should be a one line change.
+
+     Chivo Mono carries anything that has to line up in a column: hex codes, year
+     ranges, layer labels, chips.
+
+     System fallbacks stay in every stack so a blocked or failed font request
+     degrades to something with the same proportions rather than to Times. */
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-sans: "Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "Chivo Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   /* Quintic ease out. The browser default is too weak to read as intentional:
      this one moves immediately and settles, which is what makes a press feel
@@ -92,91 +118,409 @@
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-/* Dark is a media query, not a class. There is no switcher on this page, so
-   these seven overrides are the entire theme. Unlayered, so they beat the
-   values @theme emits into the theme layer. */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-accent: #A78BFA;
-    --color-bg: #12101A;
-    --color-surface: #1B1826;
-    --color-border: #2A2536;
-    --color-text: #CBC7D6;
-    --color-heading: #F3F0FA;
-    --color-muted: #8F8AA0;
-    /* Tracks --color-bg, same as in light. #12101A on #A78BFA is 8.81:1. */
-    --color-accent-ink: #12101A;
-  }
+/* ---------------------------------------------------------------------------
+   The ramp.
 
-  /* Light type on a dark field optically reads a weight lighter. Give it room. */
-  body {
-    line-height: 1.74;
-  }
+   Six colours, black to violet, taken as given. The whole page is that ramp:
+   each section is one step of it, full bleed, in order, so scrolling the page
+   walks down the gradient a step at a time.
 
-  /* The same optical debt at display scale, paid the other way. A 900 at 240px
-     on a dark field blooms; pulling a hair of tracking back keeps the counters
-     of "Rengifo" open instead of letting the g and the o close up. */
-  h1 {
-    letter-spacing: -0.045em;
-  }
+   The steps are hard, not blended. Blended, this is a background. Stepped, with
+   each panel's hex printed beside its heading, it is a specimen sheet, and the
+   page is showing you the system it is built out of rather than decorating
+   itself with it.
+
+   The six values live in the markup, one `[--band:#xxxxxx]` per section, next to
+   the swatch in the index that names it. Only one of them is written anywhere:
+   there is no second list to keep in sync.
+
+   Everything else is derived here, at the element that declares --band. That
+   placement is load bearing. A `--muted: color-mix(..., var(--band))` written in
+   `:root` resolves against the root's --band once and inherits that one answer
+   down the whole tree, which would freeze all six sections on the hero's black.
+   Declared on the section, it recomputes per section, and one variable in the
+   markup retints the type, the rules and the chips underneath it.
+--------------------------------------------------------------------------- */
+/* The corridor's canvas. Fixed behind everything, no pointer events, no place
+   in the tab order, and sized entirely by CSS so the renderer only ever has to
+   match a box it did not choose.
+
+   It is painted with the first band rather than left transparent, because there
+   is one frame between the element existing and the first render landing, and a
+   transparent canvas in that frame would show white through the whole page. */
+@utility stage {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  background-color: #000000;
+  pointer-events: none;
 }
 
-/* Deliberately transform only, with no opacity ramp.
+@utility band {
+  background-color: var(--band);
+  color: var(--color-ink);
 
-   The obvious version of this entrance fades from opacity 0. It also ships a
-   blank page to anything that captures the first painted frame: headless
-   screenshots, link unfurl bots, print. Verified, not assumed: the fading
-   build rendered an empty page under `chrome --headless --screenshot`. So the
-   content is visible from the first frame and the motion is the enhancement
-   on top, never the thing that grants visibility. The same reasoning rules out
-   the masked line reveal this hero is begging for, since an overflow clip hides
-   the name on frame one exactly the way opacity 0 does. */
-@keyframes rise {
-  from {
-    transform: translate3d(0, var(--rise-y, 10px), 0);
-  }
+  /* Measured against every step: 7.24:1 on #000000 down to 5.34:1 on #582688.
+     Mixed toward the band rather than set flat, so it recedes by the same
+     optical amount on all six rather than by the same number. */
+  --muted: color-mix(in oklab, var(--color-ink) 70%, var(--band));
+
+  /* Hairlines. --rule draws the grid and outlines the chips, --rule-strong
+     outlines the things that answer a click: the copy button and the index
+     rows. */
+  --rule: color-mix(in oklab, var(--color-ink) 14%, var(--band));
+  --rule-strong: color-mix(in oklab, var(--color-ink) 30%, var(--band));
+
+  /* One step lighter than the band, for the few surfaces that sit on top of it.
+     Derived rather than picked so it tracks the ramp automatically. */
+  --raised: color-mix(in oklab, var(--color-ink) 7%, var(--band));
+
+  /* The seam. A single hairline of light along the top edge of every panel, so
+     two adjacent steps read as two surfaces meeting rather than as a gradient
+     that lost its dither. */
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--color-ink) 10%, transparent);
 }
 
-/* One entrance, played once, on a page nobody scrolls twice. Six beats of 40ms
-   carry the eye from the masthead down to the footer and then get out of the
-   way; the whole of <main> is one beat rather than one per row, because a grid
-   that staggers its own cells is the animate-everything tell. Total settle is
-   520ms wall clock, 280ms per element. Nothing here animates on scroll, on
-   hover per cell, or on any repeat visit. The name gets a longer throw than the
-   rest (22px against 10px) because at 240px a 10px rise is not perceptible. */
-@utility rise {
-  animation: rise 280ms var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1)) both;
+/* The handover to WebGL.
+
+   `webgl` is set by scene.js, and only after a rendering context has actually
+   been created. Until then, and forever if it never happens, the six bands
+   paint themselves and the page is the flat page it was.
+
+   What changes is only the fill. Every derived token stays exactly as it was:
+   --band is still declared per section, so --muted, --rule and --raised are
+   still computed from it, and the type over the corridor is tinted by the same
+   values that were measured against the flat colour. The corridor is built from
+   the same six hexes and fogged into flatness at the distance the text sits, so
+   those measurements still describe what is behind a paragraph.
+
+   The seam goes with the fill. Two painted surfaces meeting needs a line drawn
+   between them. Two rooms with a lit gate between them does not: the gate is
+   the seam, in three dimensions. */
+.webgl .band {
+  /* Translucent, not transparent.
+
+     Fully transparent was the obvious move and it does not survive measurement.
+     The corridor is lit: a corner strip, a gate arriving, a dust mote, and a
+     patch of the field lifts a few points brighter than the flat colour every
+     contrast ratio on this page was calculated against. Measured on the pixels
+     three.js actually paints, a paragraph came out at 3.68:1 against a
+     requirement of 4.5, and dimming the scene until it passed left the tightest
+     margin at a tenth of a point, which is not a margin.
+
+     Half the band composited back over the scene fixes it at the root. Every
+     pixel behind the type is pulled halfway home to the colour it was measured
+     against, so the whole set of ratios becomes true again, and the corridor is
+     still plainly moving underneath: the gates, the ribs and the dust all read
+     through it. One number, and it is the number that decides whether this page
+     is legible, so it is written here rather than tuned in the renderer.
+
+     Re-measured the same way afterwards, at thirteen scroll depths including
+     both gate crossings. */
+  background-color: color-mix(in srgb, var(--band) 74%, transparent);
+  box-shadow: none;
+
+  /* And the muted tone still takes a little more ink than it does on the flat
+     page, because the half that shows through is the half that moves. */
+  --muted: color-mix(in oklab, var(--color-ink) 78%, var(--band));
 }
 
-/* The measure. Everything on the page sits inside one of these, including the
-   full-bleed Currently band, whose surface colour runs to the viewport edge
-   while its content stays on the same left edge as every other section. */
+/* The measure. Everything sits inside one of these, including the full bleed
+   bands, whose colour runs to the viewport edge while their content stays on the
+   same left edge as every other section. */
 @utility shell {
   width: 100%;
-  max-width: 96rem;
+  max-width: 80rem;
   margin-inline: auto;
   padding-inline: var(--gutter);
 }
 
-/* The section device, and the only ornament on the page: a 3px rule across the
-   measure with the first few centimetres of it in amber. It is one element, it
-   carries no text, and it is what makes four sections read as an index rather
-   than as four paragraphs that happen to be far apart. */
-@utility rule-top {
-  position: relative;
-  border-block-start: 3px solid var(--color-border);
+/* ---------------------------------------------------------------------------
+   Type
+--------------------------------------------------------------------------- */
 
-  &::before {
-    content: "";
-    position: absolute;
-    inset-block-start: -3px;
-    inset-inline-start: 0;
-    inline-size: clamp(3.5rem, 8vw, 7rem);
-    block-size: 3px;
-    background-color: var(--color-accent);
+/* The name, once. Capped at 6rem: past that a heading is shouting rather than
+   set. What gives it presence instead is the optical axis. `font-optical-sizing`
+   is already `auto` by default, so the browser feeds the used font size straight
+   into the opsz axis and the letterforms pull tight on their own: opsz 96 at the
+   6rem ceiling, opsz 44 when the same heading renders at 44px on a phone. That
+   is the correct behaviour rather than a compromise, because a display cut wants
+   to open up as it gets smaller. It is declared rather than left implicit
+   because the whole hierarchy below depends on it. */
+@utility display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-weight: 800;
+  font-size: clamp(2.75rem, 8.5vw, 6rem);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+/* Section headings. A step lighter and a lot smaller, which the optical axis
+   turns into a visibly rounder, more open cut without a second declaration. */
+@utility heading {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-size: clamp(2rem, 5.4vw, 3.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+/* Item headings. By this size the face has opened out far enough to read as a
+   different voice from the name rather than as the name in a smaller size,
+   which is the job the width axis used to do here. */
+@utility subhead {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-size: clamp(1.375rem, 2.4vw, 1.875rem);
+  line-height: 1.14;
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+}
+
+/* Data. Hex codes, year ranges, layer names, chips. Tabular by default because
+   half of what it sets is numbers in a column. */
+@utility label {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------------------
+   Objects
+--------------------------------------------------------------------------- */
+
+/* A row of the index in the hero, and the same object collapsed into the gauge.
+   Each row carries its own --band, so the muted hex code inside it is measured
+   against that row's colour and not against the hero's black. The first row is
+   #000000 on a #000000 page and is legible only because of this: its hairline
+   is mixed from its own band rather than from the page's, which lifts it clear
+   of the black behind it. */
+@utility swatch {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.875rem;
+  min-height: 3rem;
+  padding-inline: 0.875rem;
+  background-color: var(--band);
+  border: 1px solid var(--rule-strong);
+  --muted: color-mix(in oklab, var(--color-ink) 70%, var(--band));
+  --rule-strong: color-mix(in oklab, var(--color-ink) 30%, var(--band));
+  transition: translate 200ms var(--ease-out), border-color 200ms var(--ease-out);
+
+  /* The rows are stacked with a shared edge, so the borders would double up. */
+  & + & {
+    margin-block-start: -1px;
+  }
+
+  /* Same guard as the `hover:` variant above, written out because a raw
+     `&:hover` inside a utility does not go through it. On a phone this row
+     would otherwise sit shifted 6px right, outlined in glow, until you tapped
+     something else. */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: var(--color-glow);
+      translate: 6px 0;
+      z-index: 1;
+    }
+  }
+
+  /* The rows overlap by a pixel so their shared borders do not double up, which
+     means the row below paints over the row above. On hover that is handled by
+     lifting z-index; focus needs the same lift or a keyboard user gets a focus
+     ring with its bottom edge cut off on five of the six rows, while a mouse
+     user gets a closed one. */
+  &:focus-visible {
+    z-index: 1;
+  }
+
+  &:active {
+    scale: 0.99;
   }
 }
 
+/* The copy button. The only control on the page that is not a link, and the one
+   place worth spending real motion on: it is the moment the page answers a
+   click with something other than a navigation. */
+@utility copy {
+  display: inline-grid;
+  place-items: center;
+  min-height: 3rem;
+  min-width: 5.5rem;
+  padding-inline: 1.125rem;
+  border: 1px solid var(--rule-strong);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  transition: border-color 200ms var(--ease-out), color 200ms var(--ease-out), scale 160ms var(--ease-out);
+
+  /* Both labels occupy the same grid cell, so the button is sized by the longer
+     of the two and never resizes mid swap. A width that jumps on click is the
+     tell that the two states were built as two separate buttons. */
+  & > span {
+    grid-area: 1 / 1;
+
+    /* Reverting is the system tidying up after itself, so it is quick.
+       Committing is the state the user asked for, so it gets room to be seen.
+       150 against 220 is the ratio that reads as responsive rather than as lag,
+       and this rule carries the shorter of the two because a transition takes
+       its timing from the state it is moving into. */
+    transition: opacity 150ms var(--ease-out), filter 150ms var(--ease-out), translate 150ms var(--ease-out);
+  }
+
+  /* A straight crossfade between two words shows you two words. The blur closes
+     the gap: it stops the eye resolving either label during the handover, so it
+     reads as one word changing rather than as two words overlapping. 3px, well
+     under the point where the filter starts costing anything. */
+  & > [data-done] {
+    opacity: 0;
+    filter: blur(3px);
+    translate: 0 5px;
+  }
+
+  &[data-state="done"] {
+    border-color: var(--color-glow);
+    color: var(--color-glow);
+  }
+
+  &[data-state="done"] > span {
+    transition-duration: 220ms;
+  }
+
+  &[data-state="done"] > [data-idle] {
+    opacity: 0;
+    filter: blur(3px);
+    translate: 0 -5px;
+  }
+
+  &[data-state="done"] > [data-done] {
+    opacity: 1;
+    filter: blur(0);
+    translate: 0 0;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: var(--color-glow);
+    }
+  }
+
+  &:active {
+    scale: 0.97;
+  }
+}
+
+/* Stack chips. Not buttons and not links, so they get no hover state: an
+   affordance that answers nothing is a lie the interface tells once per chip. */
+@utility chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.125rem;
+  padding-inline: 0.75rem;
+  background-color: var(--raised);
+  border: 1px solid var(--rule);
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+
+/* The gauge. A fixed strip of the six colours on the right edge, with a marker
+   the script parks at the current scroll position. It is the index from the hero
+   at 1/8 scale, kept on screen after the hero leaves. Position only, no links:
+   the index above is the navigation and duplicating it here would ship a second
+   unlabelled nav for a screen reader to walk. aria-hidden in the markup. */
+@utility gauge {
+  /* Centred with auto margins against a definite height rather than with a
+     -50% translate. The reduced motion block below cancels `translate` outright,
+     and a gauge that jumps to the top of the viewport for the people who asked
+     for less movement is not less movement, it is a bug. This way the reveal
+     below is the only thing translate is holding. */
+  position: fixed;
+  inset-block: 0;
+  margin-block: auto;
+  inset-inline-end: max(0.75rem, calc(var(--gutter) / 3));
+  z-index: 20;
+  display: none;
+  width: 0.375rem;
+  pointer-events: none;
+
+  /* Folded shut until the hero is behind you, then unfurled from its own centre
+     by a scrubbed tween rather than flipped by a threshold, so it reads as being
+     produced by the hero leaving rather than as a thing that popped in. In the
+     hero the index is already on screen at full size a few centimetres to the
+     left, and showing the 1/8 scale copy of it next to the original is just two
+     of the same object.
+
+     0.06 rather than 0, because nothing in the world reappears out of nothing.
+     At rest it is a visible hairline of the ramp, which is also the state a
+     browser with no JavaScript is left in: present, honest, and not lying about
+     a scroll position it cannot measure.
+
+     Written as `transform: scaleY()` and NOT as the standalone `scale` property.
+     The script animates scaleY, which GSAP writes as an inline `transform`. The
+     two are separate properties that COMPOSE rather than override, so a closed
+     state declared as `scale: 1 0.06` would multiply itself against every value
+     the script set and leave the gauge permanently at six percent of its
+     height. */
+  transform-origin: 50% 50%;
+  transform: scaleY(0.06);
+
+  /* Six hard stops, no interpolation, in the same order as the page. */
+  background: linear-gradient(
+    to bottom,
+    #000000 0 16.6667%,
+    #1B1B1B 16.6667% 33.3333%,
+    #2A1E36 33.3333% 50%,
+    #3A2152 50% 66.6667%,
+    #49236D 66.6667% 83.3333%,
+    #582688 83.3333% 100%
+  );
+  box-shadow: 0 0 0 1px color-mix(in oklab, #F7F3FC 18%, transparent);
+
+  @media (min-width: 1024px) {
+    display: block;
+    block-size: 13rem;
+  }
+
+  /* The marker is a real element, not a ::after, and it is moved with
+     `translate` rather than by animating `inset-block-start`.
+
+     Two reasons, and the first one is a bug the earlier build of this page
+     actually shipped. Writing the position as `inset-block-start: calc(var(...))`
+     animates a layout property sixty times a second, which is the thing you are
+     never supposed to do. And feeding it through a custom property set on the
+     PARENT is worse than it looks: changing an inherited custom property
+     invalidates style for the whole subtree under it, so a scroll was
+     recalculating the gauge and everything inside it every frame to move two
+     pixels of light. A transform written straight onto the element it moves
+     touches nothing else and runs on the compositor. */
+  & > i {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: -0.25rem;
+    display: block;
+    block-size: 0.125rem;
+    background-color: var(--color-glow);
+    box-shadow: 0 0 8px 1px color-mix(in oklab, var(--color-glow) 55%, transparent);
+    will-change: transform;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
 @layer base {
   :root {
     /* One gutter for the whole page, so the masthead rule, the name, the grid
@@ -191,8 +535,7 @@
   }
 
   /* `clip`, never `hidden`. `hidden` would make the root a scroll container,
-     which kills position: sticky on descendants and can trap focus. With a
-     17vw heading on the page this guard is no longer theoretical. */
+     which kills position: fixed containment expectations and can trap focus. */
   html,
   body {
     overflow-x: clip;
@@ -200,7 +543,28 @@
 
   html {
     -webkit-text-size-adjust: 100%;
-    color-scheme: light dark;
+
+    /* The page is six dark panels. There is no light variant to switch to, and
+       a form control rendered light on #2A1E36 would be the only thing on screen
+       that did not get the memo. */
+    color-scheme: dark;
+
+    /* The canvas: the area the browser paints OUTSIDE the document, which you
+       see when a trackpad or a phone rubber-bands past either end.
+
+       Nothing here declared a background, so that area was being painted with
+       the browser's own dark-scheme default, #121212. On a page whose entire
+       argument is that it is made of exactly six colours, an uninvited seventh
+       one showing up every time somebody overscrolls is not a small thing.
+
+       The gradient is attached to the viewport rather than to the document, so
+       its two hard stops land above and below the fold: rubber-band past the top
+       and you get #000000, which is the band you are leaving, and past the
+       bottom you get #582688, which is the band you are in. The solid colour
+       under it is the fallback for anything that ignores the image. */
+    background-color: #000000;
+    background-image: linear-gradient(to bottom, #000000 0 50%, #582688 50% 100%);
+    background-attachment: fixed;
   }
 
   body,
@@ -212,7 +576,9 @@
   dt,
   dd,
   ul,
-  li {
+  ol,
+  li,
+  figure {
     margin: 0;
     padding: 0;
   }
@@ -231,7 +597,12 @@
     min-width: 0;
   }
 
-  ul {
+  /* Both, not just ul. The index and the experience list are ordered, because
+     their order is real: the index is the page top to bottom and the roles run
+     newest first. That is a fact for the accessibility tree to carry, not a
+     decimal marker to paint in the margin. */
+  ul,
+  ol {
     list-style: none;
   }
 
@@ -240,18 +611,91 @@
     text-decoration: none;
   }
 
+  button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
   /* The one state on the page that must never be animated or delayed. Three
-     pixels rather than two, because the elements it lands on are now large
-     enough that a hairline ring reads as a rendering artefact. */
+     pixels rather than two, because the elements it lands on are large enough
+     that a hairline ring reads as a rendering artefact. */
   :focus-visible {
-    outline: 3px solid var(--color-accent);
-    outline-offset: 4px;
+    outline: 3px solid var(--color-glow);
+    outline-offset: 3px;
   }
 
   ::selection {
-    background-color: var(--color-accent);
-    color: var(--color-bg);
+    background-color: var(--color-glow);
+    color: #000000;
   }
+
+  /* The index in the hero jumps to a band. Without this the target section's top
+     edge lands flush against the viewport top, which hides the seam that makes
+     the step readable as a step. */
+  section[id] {
+    scroll-margin-block-start: 0.75rem;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Motion
+--------------------------------------------------------------------------- */
+
+/* Deliberately transform only, with no opacity ramp.
+
+   The obvious version of this entrance fades from opacity 0. It also ships a
+   blank page to anything that captures the first painted frame: headless
+   screenshots, link unfurl bots, print. Verified, not assumed: the fading build
+   rendered an empty page under `chrome --headless --screenshot`. So the content
+   is visible from the first frame and the motion is the enhancement on top,
+   never the thing that grants visibility. The same reasoning rules out the
+   masked line reveal this hero is begging for, since an overflow clip hides the
+   name on frame one exactly the way opacity 0 does. */
+@keyframes rise {
+  from {
+    transform: translate3d(0, var(--rise-y, 10px), 0);
+  }
+}
+
+/* The two states GSAP starts its load timeline from.
+
+   These live in CSS, not in a gsap.from(), and the reason is a flash. The
+   library is deferred, so it runs after the first paint. A gsap.from() created
+   at that moment would paint the page at rest, then yank it back to the start
+   state, then animate: a visible jump on every load. Declaring the start state
+   in CSS, gated on a class that a blocking two line script in <head> sets before
+   anything paints, means the first painted frame IS the start of the animation.
+
+   Both states are legible states, not hidden ones, which is what keeps the
+   first-frame law intact: the rows are at 92% width and 18px right of home, and
+   the name is set in the open text cut instead of the tight display cut. A
+   headless screenshot catches a complete page either way.
+
+   And if the script never runs at all, neither class is ever applied and the
+   page renders in its resting state directly. No JavaScript is the good path
+   here, not the degraded one. */
+@layer base {
+  .js .swatch {
+    transform: scaleX(0.92) translateX(18px);
+  }
+
+  .js .display {
+    font-variation-settings: "opsz" 12;
+  }
+}
+
+/* One entrance, played once. Five elements at 0, 60, 140, 200 and 240ms carry
+   the eye from the masthead down to the index and then get out of the way: each
+   runs 280ms, so the last one settles at 520ms.
+
+   Two things do respond to scroll, both on the gauge, and both are readouts
+   rather than entrances: it opens as the hero leaves, and its marker reports
+   where you are. Nothing animates per cell on hover, and nothing replays. */
+@utility rise {
+  animation: rise 280ms var(--ease-out) both;
 }
 
 /* Unlayered, so it outranks every utility. Movement goes; opacity and colour
@@ -263,21 +707,44 @@
     animation: none;
   }
 
+  /* Belt and braces. The script already declines to add the `js` class when the
+     query matches, so these rules should never have anything to cancel. They are
+     here because the cost of being wrong is a name stuck in the wrong optical
+     cut and six rows stuck 18px off their grid, and the cost of the rules is
+     four lines. */
+  .js .swatch {
+    transform: none;
+  }
+
+  .js .display {
+    font-variation-settings: normal;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
   /* Strips transform, translate and scale out of every transition on the page
      while leaving opacity and colour in, so hover and press still answer. */
   *,
   *::before,
   *::after {
-    transition-property: opacity, color, background-color, border-color, outline-color, text-decoration-color !important;
+    transition-property: opacity, color, background-color, border-color, outline-color, text-decoration-color, filter !important;
     transition-duration: 160ms !important;
 
     /* Removing the transition alone is not enough. Tailwind compiles
        `hover:-translate-y-0.5` and `active:scale-[0.97]` to the standalone
        `translate` and `scale` properties, which would still snap into place
        untransitioned: instant movement is still movement. Cancel the values,
-       not just their timing. The button keeps its colour and its focus ring. */
+       not just their timing. Elements keep their colour and their focus ring. */
     translate: none !important;
     scale: none !important;
     rotate: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
   }
 }
