@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#08080B">
 <title>Nicolò Rengifo, full-stack web developer</title>
 <meta name="description" content="Full-stack web developer building multi-tenant web platforms with Laravel and Vue. Based in Legnano, Italy.">
 <link rel="icon" href="data:,">
@@ -19,203 +19,185 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentEl
 </script>
 <link rel="stylesheet" href="style.css">
 </head>
-<body class="font-sans text-[1.0625rem]/[1.7] antialiased">
+<body>
 
-<svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false"><symbol id="i-go" viewBox="0 0 16 16"><path d="M5.5 3.5 10 8l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="square"/></symbol></svg>
+<a class="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-40 focus-visible:bg-ink focus-visible:px-4 focus-visible:py-3 focus-visible:font-mono focus-visible:text-[0.8125rem] focus-visible:text-void" href="#work">Skip to content</a>
 
-<a class="sr-only focus-visible:not-sr-only focus-visible:absolute focus-visible:left-4 focus-visible:top-4 focus-visible:z-50 focus-visible:bg-glow focus-visible:px-4 focus-visible:py-3 focus-visible:font-mono focus-visible:text-[0.8125rem] focus-visible:text-black" href="#work">Skip to content</a>
-
-<!-- Position only, and a duplicate of the index in the hero. Hidden from
-     assistive tech on purpose: the index is the navigation, and shipping a
-     second unlabelled one here would just be another list to walk past. -->
-<!-- The corridor. Purely a backdrop: it carries no content, no text and no
-     control, so it is invisible to assistive tech and to keyboard focus. If the
-     module never runs, this element stays an empty transparent box and the CSS
-     band colours behind it are what the reader sees. -->
+<!-- The machine. A backdrop in the DOM sense only: it carries no content, no
+     text and no control, so it is invisible to assistive tech and to keyboard
+     focus. Everything it represents exists in HTML above it. If the module never
+     runs this stays an empty box painted --void, and the page is the page. -->
 <canvas id="scene" class="stage" aria-hidden="true"></canvas>
 
-<div class="gauge" data-gauge aria-hidden="true"><i></i></div>
+<!-- Duplicates what the nav already says, in a worse form, so it is hidden from
+     assistive tech. It is the machine's readout, not information. -->
+<p class="counter fixed bottom-6 right-6 z-30 hidden lg:block" aria-hidden="true"><span data-counter>1</span> / 6</p>
 
-<header id="top" class="band flex min-h-svh flex-col [--band:#000000]">
-  <div class="shell flex flex-1 flex-col">
+<div class="relative z-10">
 
-    <div class="rise flex flex-wrap items-baseline justify-between gap-x-8 gap-y-1 border-b border-(--rule) pt-6 pb-5 sm:pt-8">
-      <p class="label text-ink">Full-stack web developer</p>
-      <p class="label text-(--muted)">Legnano, Italy</p>
+<header id="top" class="shell" data-section-index="0">
+  <div class="lg:w-[54%]">
+
+    <div class="rise flex flex-wrap items-baseline justify-between gap-x-8 gap-y-1 border-b border-rule pt-6 pb-5 sm:pt-8">
+      <p class="mono text-ink">Full-stack web developer</p>
+      <p class="mono text-muted">Legnano, Italy</p>
     </div>
 
-    <div class="grid flex-1 grid-cols-1 items-center gap-x-16 gap-y-14 py-[clamp(3.5rem,8vw,6rem)] lg:grid-cols-12">
+    <div class="py-[clamp(3.5rem,9vw,6.5rem)]">
+      <h1 class="rise name display" style="animation-delay:60ms"><span class="block">Nicolò</span><span class="block">Rengifo</span></h1>
 
-      <div class="lg:col-span-7">
-        <h1 class="rise [--rise-y:20px] [animation-delay:60ms] display text-ink"><span class="block">Nicolò</span> <span class="block">Rengifo</span></h1>
+      <p class="rise mt-[clamp(2rem,4vw,3rem)] max-w-[64ch] text-[clamp(1.125rem,1.7vw,1.375rem)] leading-[1.5] tracking-[-0.012em]" style="animation-delay:140ms">I build multi-tenant web platforms: backend, visual editor, theme system, deploy. Working on the web since 2020, mostly PHP and Vue. Lately a lot of my time goes to AI tooling and automation.</p>
 
-        <p class="rise [animation-delay:140ms] mt-[clamp(2rem,4vw,3rem)] max-w-[62ch] text-pretty text-[clamp(1.125rem,1.8vw,1.4375rem)] leading-[1.5] tracking-[-0.012em] text-ink">I build multi-tenant web platforms: backend, visual editor, theme system, deploy. Working on the web since 2020, mostly PHP and Vue. Lately a lot of my time goes to AI tooling and automation.</p>
-
-        <div class="rise [animation-delay:200ms] mt-[clamp(2.25rem,4vw,3rem)] flex flex-wrap items-center gap-x-8 gap-y-3">
-          <a class="inline-flex min-h-12 items-center bg-glow px-7 font-mono text-[0.8125rem] font-medium tracking-[0.08em] text-black transition-[translate,scale] duration-200 ease-out hover:-translate-y-0.5 active:scale-[0.97]" href="mailto:nicogifo2000@gmail.com">Email</a>
-          <a class="inline-flex min-h-12 items-center font-mono text-[0.8125rem] tracking-[0.08em] text-ink underline decoration-(--rule-strong) decoration-2 underline-offset-[0.5em] transition-[translate,text-decoration-color] duration-200 ease-out hover:-translate-y-0.5 hover:decoration-glow active:scale-[0.97]" href="https://www.linkedin.com/in/nicol%C3%B2rengifo/" rel="me">LinkedIn</a>
-          <a class="inline-flex min-h-12 items-center font-mono text-[0.8125rem] tracking-[0.08em] text-ink underline decoration-(--rule-strong) decoration-2 underline-offset-[0.5em] transition-[translate,text-decoration-color] duration-200 ease-out hover:-translate-y-0.5 hover:decoration-glow active:scale-[0.97]" href="https://github.com/OhhNico" rel="me">GitHub</a>
-        </div>
+      <div class="rise mt-[clamp(2.25rem,4vw,3rem)] flex flex-wrap items-center gap-x-7 gap-y-2" style="animation-delay:200ms">
+        <a class="press solid" href="mailto:nicogifo2000@gmail.com">Email</a>
+        <a class="press link mono" href="https://www.linkedin.com/in/nicol%C3%B2rengifo/" rel="me">LinkedIn</a>
+        <a class="press link mono" href="https://github.com/OhhNico" rel="me">GitHub</a>
       </div>
 
-      <!-- The index, and the legend for the whole page. Six rows, one per
-           section, each one painted in the colour that section is painted in.
-           Read it as a contents list; then scroll and watch the page walk down
-           it. The hex in each row is the value in that row's [--band:...], and
-           it is the only place either is written. -->
-      <nav class="lg:col-span-5" aria-label="Sections">
-        <p class="label mb-3 text-(--muted)" id="index-caption">Six sections, six colours</p>
-        <ol class="rise [animation-delay:240ms]" aria-describedby="index-caption">
-          <li><a class="swatch [--band:#000000]" href="#top"><span class="label text-(--muted)" aria-hidden="true">000000</span><span class="font-mono text-[0.8125rem] tracking-[0.04em] text-ink">Intro</span><svg class="size-4 text-(--muted)" aria-hidden="true" focusable="false"><use href="#i-go"/></svg></a></li>
-          <li><a class="swatch [--band:#1B1B1B]" href="#work"><span class="label text-(--muted)" aria-hidden="true">1B1B1B</span><span class="font-mono text-[0.8125rem] tracking-[0.04em] text-ink">What I work on</span><svg class="size-4 text-(--muted)" aria-hidden="true" focusable="false"><use href="#i-go"/></svg></a></li>
-          <li><a class="swatch [--band:#2A1E36]" href="#stack"><span class="label text-(--muted)" aria-hidden="true">2A1E36</span><span class="font-mono text-[0.8125rem] tracking-[0.04em] text-ink">Stack</span><svg class="size-4 text-(--muted)" aria-hidden="true" focusable="false"><use href="#i-go"/></svg></a></li>
-          <li><a class="swatch [--band:#3A2152]" href="#experience"><span class="label text-(--muted)" aria-hidden="true">3A2152</span><span class="font-mono text-[0.8125rem] tracking-[0.04em] text-ink">Experience</span><svg class="size-4 text-(--muted)" aria-hidden="true" focusable="false"><use href="#i-go"/></svg></a></li>
-          <li><a class="swatch [--band:#49236D]" href="#currently"><span class="label text-(--muted)" aria-hidden="true">49236D</span><span class="font-mono text-[0.8125rem] tracking-[0.04em] text-ink">Currently</span><svg class="size-4 text-(--muted)" aria-hidden="true" focusable="false"><use href="#i-go"/></svg></a></li>
-          <li><a class="swatch [--band:#582688]" href="#contact"><span class="label text-(--muted)" aria-hidden="true">582688</span><span class="font-mono text-[0.8125rem] tracking-[0.04em] text-ink">Contact</span><svg class="size-4 text-(--muted)" aria-hidden="true" focusable="false"><use href="#i-go"/></svg></a></li>
+      <!-- The navigation, and the legend for the six capsules. The capsules
+           themselves live inside an aria-hidden canvas, so they are not
+           navigation and cannot be: this is. Each dot repeats what its label
+           already says and never replaces it. -->
+      <nav class="rise mt-[clamp(2.75rem,6vw,4.5rem)]" aria-label="Sections" style="animation-delay:260ms">
+        <ol class="border-t border-rule">
+          <li><a class="press link flex w-full items-center border-b border-rule py-3" href="#top"><span class="dot" style="--dot:var(--color-c1)"></span><span>Intro</span></a></li>
+          <li><a class="press link flex w-full items-center border-b border-rule py-3" href="#work"><span class="dot" style="--dot:var(--color-c2)"></span><span>What I work on</span></a></li>
+          <li><a class="press link flex w-full items-center border-b border-rule py-3" href="#stack"><span class="dot" style="--dot:var(--color-c3)"></span><span>Stack</span></a></li>
+          <li><a class="press link flex w-full items-center border-b border-rule py-3" href="#experience"><span class="dot" style="--dot:var(--color-c4)"></span><span>Experience</span></a></li>
+          <li><a class="press link flex w-full items-center border-b border-rule py-3" href="#currently"><span class="dot" style="--dot:var(--color-c5)"></span><span>Currently</span></a></li>
+          <li><a class="press link flex w-full items-center border-b border-rule py-3" href="#contact"><span class="dot" style="--dot:var(--color-c6)"></span><span>Contact</span></a></li>
         </ol>
-      </nav>
 
+        <!-- The real control. The lever in the scene is its shortcut, and
+             focusing this lights that lever, so the focus state exists in both
+             places instead of vanishing at the edge of the canvas. -->
+        <button class="press link mono mt-6" type="button" data-advance>Next section</button>
+      </nav>
     </div>
   </div>
 </header>
 
 <main>
 
-  <section id="work" class="band [--band:#1B1B1B]">
-    <div class="shell py-[clamp(4rem,9vw,7.5rem)]">
-      <div class="flex items-baseline justify-between gap-6">
-        <h2 class="heading text-ink">What I work on</h2>
-        <span class="label shrink-0 text-(--muted)" aria-hidden="true">1B1B1B</span>
-      </div>
-      <ul role="list" class="mt-[clamp(2.5rem,5vw,4rem)] border-b border-(--rule)">
-        <li class="grid grid-cols-1 gap-x-12 gap-y-3 border-t border-(--rule) py-8 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:py-10">
-          <h3 class="subhead text-ink">Multi-tenant SaaS</h3>
-          <p class="max-w-[52ch] text-pretty text-[1.125rem]/[1.62] text-(--muted)">Tenant isolation, subscription billing, roles and permissions, media pipelines.</p>
+  <section id="work" class="shell" data-section-index="1">
+    <div class="lg:w-[54%] py-[clamp(3.5rem,8vw,6.5rem)]">
+      <h2 class="heading">What I work on</h2>
+      <ul role="list" class="mt-[clamp(2rem,4vw,3.25rem)] border-b border-rule">
+        <li class="spec-row">
+          <h3 class="subhead">Multi-tenant SaaS</h3>
+          <p class="max-w-[54ch] text-muted">Tenant isolation, subscription billing, roles and permissions, media pipelines.</p>
         </li>
-        <li class="grid grid-cols-1 gap-x-12 gap-y-3 border-t border-(--rule) py-8 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:py-10">
-          <h3 class="subhead text-ink">Visual editors and theme systems</h3>
-          <p class="max-w-[52ch] text-pretty text-[1.125rem]/[1.62] text-(--muted)">Drag and drop page building on a GrapesJS fork, with a themeable output layer.</p>
+        <li class="spec-row">
+          <h3 class="subhead">Visual editors and theme systems</h3>
+          <p class="max-w-[54ch] text-muted">Drag and drop page building on a GrapesJS fork, with a themeable output layer.</p>
         </li>
-        <li class="grid grid-cols-1 gap-x-12 gap-y-3 border-t border-(--rule) py-8 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:py-10">
-          <h3 class="subhead text-ink">Campaign platforms</h3>
-          <p class="max-w-[52ch] text-pretty text-[1.125rem]/[1.62] text-(--muted)">Prize campaigns that run for a few weeks. Entry validation, draws, compliance.</p>
+        <li class="spec-row">
+          <h3 class="subhead">Campaign platforms</h3>
+          <p class="max-w-[54ch] text-muted">Prize campaigns that run for a few weeks. Entry validation, draws, compliance.</p>
         </li>
-        <li class="grid grid-cols-1 gap-x-12 gap-y-3 border-t border-(--rule) py-8 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:py-10">
-          <h3 class="subhead text-ink">AI tooling</h3>
-          <p class="max-w-[52ch] text-pretty text-[1.125rem]/[1.62] text-(--muted)">MCP servers, PHP agent frameworks, and automation around design and asset work.</p>
+        <li class="spec-row">
+          <h3 class="subhead">AI tooling</h3>
+          <p class="max-w-[54ch] text-muted">MCP servers, PHP agent frameworks, and automation around design and asset work.</p>
         </li>
       </ul>
     </div>
   </section>
 
-  <section id="stack" class="band [--band:#2A1E36]">
-    <div class="shell py-[clamp(4rem,9vw,7.5rem)]">
-      <div class="flex items-baseline justify-between gap-6">
-        <h2 class="heading text-ink">Stack</h2>
-        <span class="label shrink-0 text-(--muted)" aria-hidden="true">2A1E36</span>
-      </div>
-      <dl class="mt-[clamp(2.5rem,5vw,4rem)] border-b border-(--rule)">
-        <div class="grid grid-cols-1 gap-x-12 gap-y-4 border-t border-(--rule) py-7 md:grid-cols-[minmax(0,10rem)_minmax(0,1fr)]">
-          <dt class="label pt-1.5 text-(--muted)">Backend</dt>
+  <section id="stack" class="shell" data-section-index="2">
+    <div class="lg:w-[54%] py-[clamp(3.5rem,8vw,6.5rem)]">
+      <h2 class="heading">Stack</h2>
+      <dl class="mt-[clamp(2rem,4vw,3.25rem)] border-b border-rule">
+        <div class="spec-row">
+          <dt class="mono pt-1.5 text-muted">Backend</dt>
           <dd class="flex flex-wrap gap-2"><span class="chip">PHP</span><span class="chip">Laravel</span><span class="chip">Inertia</span><span class="chip">MySQL</span><span class="chip">Python</span></dd>
         </div>
-        <div class="grid grid-cols-1 gap-x-12 gap-y-4 border-t border-(--rule) py-7 md:grid-cols-[minmax(0,10rem)_minmax(0,1fr)]">
-          <dt class="label pt-1.5 text-(--muted)">Frontend</dt>
+        <div class="spec-row">
+          <dt class="mono pt-1.5 text-muted">Frontend</dt>
           <dd class="flex flex-wrap gap-2"><span class="chip">Vue 3</span><span class="chip">Tailwind</span><span class="chip">SCSS</span><span class="chip">Vite</span><span class="chip">D3</span><span class="chip">GSAP</span></dd>
         </div>
-        <div class="grid grid-cols-1 gap-x-12 gap-y-4 border-t border-(--rule) py-7 md:grid-cols-[minmax(0,10rem)_minmax(0,1fr)]">
-          <dt class="label pt-1.5 text-(--muted)">AI</dt>
+        <div class="spec-row">
+          <dt class="mono pt-1.5 text-muted">AI</dt>
           <dd class="flex flex-wrap gap-2"><span class="chip">MCP</span><span class="chip">Neuron AI</span><span class="chip">Anthropic SDK</span><span class="chip">Playwright</span></dd>
         </div>
-        <div class="grid grid-cols-1 gap-x-12 gap-y-4 border-t border-(--rule) py-7 md:grid-cols-[minmax(0,10rem)_minmax(0,1fr)]">
-          <dt class="label pt-1.5 text-(--muted)">Also</dt>
+        <div class="spec-row">
+          <dt class="mono pt-1.5 text-muted">Also</dt>
           <dd class="flex flex-wrap gap-2"><span class="chip">WordPress</span><span class="chip">Webflow</span><span class="chip">Figma</span><span class="chip">DNS</span><span class="chip">SEO</span></dd>
         </div>
       </dl>
     </div>
   </section>
 
-  <section id="experience" class="band [--band:#3A2152]">
-    <div class="shell py-[clamp(4.5rem,10vw,8.5rem)]">
-      <div class="flex items-baseline justify-between gap-6">
-        <h2 class="heading text-ink">Experience</h2>
-        <span class="label shrink-0 text-(--muted)" aria-hidden="true">3A2152</span>
-      </div>
-      <ol role="list" class="mt-[clamp(2.5rem,5vw,4rem)] border-b border-(--rule)">
-        <li class="grid grid-cols-1 gap-x-12 gap-y-4 border-t border-(--rule) py-9 md:grid-cols-[minmax(0,10rem)_minmax(0,1fr)] lg:py-12">
-          <p class="label pt-2 text-(--muted)">2024 to now</p>
+  <section id="experience" class="shell" data-section-index="3">
+    <div class="lg:w-[54%] py-[clamp(3.5rem,8vw,6.5rem)]">
+      <h2 class="heading">Experience</h2>
+      <ol role="list" class="mt-[clamp(2rem,4vw,3.25rem)] border-b border-rule">
+        <li class="spec-row">
+          <p class="mono pt-2 text-muted">2024 to now</p>
           <div>
-            <h3 class="subhead text-ink">Wink SRL</h3>
-            <p class="mt-4 max-w-[58ch] text-pretty text-(--muted)">Multi-tenant Laravel platform with a visual page editor and a theme system on top of it. Vue 3 dashboards with interactive charts, campaign sites, chatbot integrations, plus DNS and hosting.</p>
+            <h3 class="subhead">Wink SRL</h3>
+            <p class="mt-3 max-w-[58ch] text-muted">Multi-tenant Laravel platform with a visual page editor and a theme system on top of it. Vue 3 dashboards with interactive charts, campaign sites, chatbot integrations, plus DNS and hosting.</p>
           </div>
         </li>
-        <li class="grid grid-cols-1 gap-x-12 gap-y-4 border-t border-(--rule) py-9 md:grid-cols-[minmax(0,10rem)_minmax(0,1fr)] lg:py-12">
-          <p class="label pt-2 text-(--muted)">2020 to 2024</p>
+        <li class="spec-row">
+          <p class="mono pt-2 text-muted">2020 to 2024</p>
           <div>
-            <h3 class="subhead text-ink">SDV</h3>
-            <p class="mt-4 max-w-[58ch] text-pretty text-(--muted)">Client web work: responsive front ends, pages built to rank in search, and long running maintenance for manufacturing and B2B clients.</p>
+            <h3 class="subhead">SDV</h3>
+            <p class="mt-3 max-w-[58ch] text-muted">Client web work: responsive front ends, pages built to rank in search, and long running maintenance for manufacturing and B2B clients.</p>
           </div>
         </li>
       </ol>
     </div>
   </section>
 
-  <section id="currently" class="band [--band:#49236D]">
-    <div class="shell py-[clamp(3.5rem,7vw,6rem)]">
-      <div class="flex items-baseline justify-between gap-6">
-        <h2 class="heading text-ink">Currently</h2>
-        <span class="label shrink-0 text-(--muted)" aria-hidden="true">49236D</span>
-      </div>
-      <dl class="mt-[clamp(2.5rem,5vw,4rem)] grid grid-cols-1 border-b border-(--rule) sm:grid-cols-3">
-        <div class="border-t border-(--rule) py-8 sm:pr-8">
-          <dt class="label text-(--muted)">learning</dt>
-          <dd class="mt-4 text-pretty text-[clamp(1.0625rem,1.5vw,1.375rem)] leading-[1.4] tracking-[-0.01em] text-ink">MCP servers, agent orchestration</dd>
+  <section id="currently" class="shell" data-section-index="4">
+    <div class="lg:w-[54%] py-[clamp(3.5rem,8vw,6.5rem)]">
+      <h2 class="heading">Currently</h2>
+      <dl class="mt-[clamp(2rem,4vw,3.25rem)] border-b border-rule">
+        <div class="spec-row">
+          <dt class="mono pt-1.5 text-muted">learning</dt>
+          <dd class="text-[1.125rem]">MCP servers, agent orchestration</dd>
         </div>
-        <div class="border-t border-(--rule) py-8 sm:border-l sm:pl-8 sm:pr-8">
-          <dt class="label text-(--muted)">building</dt>
-          <dd class="mt-4 text-pretty text-[clamp(1.0625rem,1.5vw,1.375rem)] leading-[1.4] tracking-[-0.01em] text-ink">a themeable multi-tenant suite</dd>
+        <div class="spec-row">
+          <dt class="mono pt-1.5 text-muted">building</dt>
+          <dd class="text-[1.125rem]">a themeable multi-tenant suite</dd>
         </div>
-        <div class="border-t border-(--rule) py-8 sm:border-l sm:pl-8">
-          <dt class="label text-(--muted)">languages</dt>
-          <dd class="mt-4 text-pretty text-[clamp(1.0625rem,1.5vw,1.375rem)] leading-[1.4] tracking-[-0.01em] text-ink">Italian (native), English B2, Spanish B2</dd>
+        <div class="spec-row">
+          <dt class="mono pt-1.5 text-muted">languages</dt>
+          <dd class="text-[1.125rem]">Italian (native), English B2, Spanish B2</dd>
         </div>
       </dl>
     </div>
   </section>
 
-  <section id="contact" class="band [--band:#582688]">
-    <div class="shell pt-[clamp(5rem,11vw,9rem)] pb-[clamp(3rem,6vw,5rem)]">
-      <div class="flex items-baseline justify-between gap-6">
-        <h2 class="heading text-ink">Contact</h2>
-        <span class="label shrink-0 text-(--muted)" aria-hidden="true">582688</span>
-      </div>
+  <section id="contact" class="shell" data-section-index="5">
+    <div class="lg:w-[54%] pt-[clamp(3.5rem,8vw,6.5rem)] pb-[clamp(3rem,6vw,5rem)]">
+      <h2 class="heading">Contact</h2>
 
-      <div class="mt-[clamp(2.5rem,5vw,4rem)] flex flex-wrap items-center gap-x-8 gap-y-5 border-t border-(--rule) pt-8">
-        <a class="inline-block min-w-0 max-w-full [overflow-wrap:anywhere] py-2.5 font-display text-[clamp(1.375rem,5.5vw,2.75rem)] font-bold leading-[1.1] tracking-[-0.02em] text-ink underline decoration-(--rule-strong) decoration-[0.06em] underline-offset-[0.18em] transition-[translate,text-decoration-color] duration-200 ease-out hover:-translate-y-0.5 hover:decoration-glow active:scale-[0.97]" href="mailto:nicogifo2000@gmail.com">nicogifo2000@gmail.com</a>
+      <div class="mt-[clamp(2rem,4vw,3.25rem)] flex flex-wrap items-center gap-x-6 gap-y-4 border-t border-rule pt-8">
+        <a class="press link max-w-full [overflow-wrap:anywhere] font-sans text-[clamp(1.25rem,4.5vw,2.25rem)] font-bold leading-[1.15] tracking-[-0.02em] [text-decoration-thickness:0.055em] [text-underline-offset:0.2em]" href="mailto:nicogifo2000@gmail.com">nicogifo2000@gmail.com</a>
         <button class="copy" type="button" data-copy="nicogifo2000@gmail.com" aria-label="Copy email address">
           <span data-idle>Copy</span>
           <span data-done aria-hidden="true">Copied</span>
         </button>
-        <p class="sr-only" role="status" id="copy-status"></p>
+        <p class="sr-only" role="status" data-copy-status></p>
       </div>
 
-      <div class="mt-9 flex flex-wrap items-center gap-x-8 gap-y-3">
-        <a class="inline-flex min-h-12 items-center font-mono text-[0.8125rem] tracking-[0.08em] text-ink underline decoration-(--rule-strong) decoration-2 underline-offset-[0.5em] transition-[translate,text-decoration-color] duration-200 ease-out hover:-translate-y-0.5 hover:decoration-glow active:scale-[0.97]" href="https://www.linkedin.com/in/nicol%C3%B2rengifo/" rel="me">LinkedIn</a>
-        <a class="inline-flex min-h-12 items-center font-mono text-[0.8125rem] tracking-[0.08em] text-ink underline decoration-(--rule-strong) decoration-2 underline-offset-[0.5em] transition-[translate,text-decoration-color] duration-200 ease-out hover:-translate-y-0.5 hover:decoration-glow active:scale-[0.97]" href="https://github.com/OhhNico" rel="me">GitHub</a>
+      <div class="mt-8 flex flex-wrap items-center gap-x-7 gap-y-2">
+        <a class="press link mono" href="https://www.linkedin.com/in/nicol%C3%B2rengifo/" rel="me">LinkedIn</a>
+        <a class="press link mono" href="https://github.com/OhhNico" rel="me">GitHub</a>
       </div>
 
-      <div class="mt-[clamp(3.5rem,7vw,6rem)] flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2 border-t border-(--rule) pt-7">
-        <p class="label text-(--muted)">Legnano, Italy</p>
-        <p class="label text-(--muted)">Bricolage Grotesque, Chivo Mono, GSAP and three.js, all served from here. Six colours, one corridor.</p>
+      <div class="mt-[clamp(3.5rem,7vw,6rem)] flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2 border-t border-rule pt-7">
+        <p class="mono text-muted">Legnano, Italy</p>
+        <p class="mono text-muted">Bricolage Grotesque, Chivo Mono, three.js and GSAP, all served from here.</p>
       </div>
     </div>
   </section>
 
 </main>
+</div>
 
-<script src="vendor/gsap.min.js" defer></script>
-<script src="main.js" defer></script>
-<script type="module" src="scene.js"></script>
+<script type="module" src="app.js"></script>
 
 </body>
 </html>
