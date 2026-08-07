@@ -1,16 +1,21 @@
 {
   "name": "ohhnico-github-io",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "Personal site for Nicolo Rengifo. Tailwind source in src/input.css compiles to style.css, which is committed and is the only stylesheet the page loads. GSAP is vendored into vendor/ rather than fetched, so the published page makes no third-party requests.",
+  "type": "module",
+  "description": "Personal site for Nicolo Rengifo. The page is a capsule prize machine. Tailwind compiles src/input.css to style.css and esbuild bundles src/main.js to app.js; both outputs are committed and are the only stylesheet and the only script the page loads, so the published page makes no third-party requests.",
   "scripts": {
-    "build": "tailwindcss --input src/input.css --output style.css --minify",
-    "dev": "tailwindcss --input src/input.css --output style.css --watch",
-    "vendor": "cp node_modules/gsap/dist/gsap.min.js node_modules/three/build/three.module.min.js node_modules/three/build/three.core.min.js vendor/",
-    "serve": "python3 -m http.server 4173"
+    "build": "npm run build:css && npm run build:js",
+    "build:css": "tailwindcss --input src/input.css --output style.css --minify",
+    "build:js": "esbuild src/main.js --bundle --format=esm --target=es2022 --minify --outfile=app.js",
+    "dev": "npm run build:css -- --watch & npm run build:js -- --watch --sourcemap",
+    "serve": "python3 -m http.server 4173",
+    "refs": "node tools/fetch-refs.mjs",
+    "verify": "node tools/verify.mjs"
   },
   "devDependencies": {
     "@tailwindcss/cli": "4.3.3",
+    "esbuild": "0.25.12",
     "gsap": "3.15.0",
     "tailwindcss": "4.3.3",
     "three": "0.185.1"
