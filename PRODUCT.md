@@ -26,6 +26,8 @@ Stampato: due materiali soli, carta calda e inchiostro quasi nero, e ogni pannel
 
 **Riferimento nominato:** il deck editoriale da fashion portfolio fornito dal proprietario il 2026-08-08 (display nero compresso, pannelli alternati carta e nero, corsivo firma in sovrapposizione, asterischi a otto punte, barre a filetto con le etichette), eseguito con la disciplina di interazione di Emil Kowalski (emilkowal.ski): easing custom, stati che sfumano attraverso un blur, feedback sotto i 200ms, una chiave di avanzamento con due millimetri di corsa.
 
+**L'architettura è quella del riferimento, non solo la pelle.** La pagina è un deck di sei slide a schermo pieno e nessuna ripete il layout di un'altra: una cover centrata, una griglia incorniciata, un muro con il titolo verticale, uno split a metà, tre colonne, una finale firmata. Lo scroll aggancia i bordi delle slide dove una slide sta nello schermo, e lascia andare dove non ci sta. Il pattern "hero più sezioni tutte uguali" dei build precedenti è il difetto che questa struttura elimina, nominato dal proprietario.
+
 ## Anti-references
 
 - **Portfolio 3D da Awwwards**: scuro, neon, monospace, griglia di fondo, glow diffuso. È il riflesso di primo ordine della categoria, ed è la famiglia estetica del build precedente (la capsule machine), che questo build sostituisce.

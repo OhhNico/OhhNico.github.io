@@ -23,182 +23,163 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentEl
 
 <a class="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-40 focus-visible:bg-ink focus-visible:px-4 focus-visible:py-3 focus-visible:font-mono focus-visible:text-[0.8125rem] focus-visible:text-field" href="#work">Skip to content</a>
 
-<!-- The position readout. An instrument, not navigation: it duplicates what
-     the index strip already says, in a worse form, so it is hidden from
-     assistive tech and can never take focus. -->
-<aside class="rail" aria-hidden="true">
-  <span class="rail-tick" data-on></span>
-  <span class="rail-tick"></span>
-  <span class="rail-tick"></span>
-  <span class="rail-tick"></span>
-  <span class="rail-tick"></span>
-  <span class="rail-tick"></span>
-  <p class="counter"><span data-counter>1</span> / 6</p>
-</aside>
+<!-- The page number. An instrument, not navigation: it duplicates what the
+     index band already says, in a worse form, so it is hidden from assistive
+     tech and can never take focus. -->
+<p class="counter" aria-hidden="true"><span data-counter>1</span> / 6</p>
 
-<header id="top" data-section-index="0">
-  <div class="wrap">
+<!-- Slide 1, the cover. -->
+<header id="top" class="slide slide-cover" data-section-index="0">
+  <div class="rise bar">
+    <p class="mono">Full-stack web developer</p>
+    <p class="mono text-muted">Legnano, Italy</p>
+  </div>
 
-    <div class="rise bar mt-6 sm:mt-8">
-      <p class="mono">Full-stack web developer</p>
-      <p class="mono text-muted">Legnano, Italy</p>
-    </div>
-
-    <div class="relative pt-[clamp(3rem,7vw,5.5rem)] pb-[clamp(2.5rem,5vw,4rem)]">
-      <svg class="star absolute right-0 top-[clamp(0.5rem,2vw,1.5rem)]" style="--star:clamp(2.75rem,6vw,5.5rem)" viewBox="0 0 96 96" aria-hidden="true" fill="currentColor"><path d="M43 0h10v96H43z"/><path d="M0 43h96v10H0z"/><path d="m13.4 20.5 7.1-7.1 62.1 62.1-7.1 7.1z"/><path d="m82.6 13.4 7.1 7.1-62.1 62.1-7.1-7.1z"/></svg>
-
-      <!-- The signature crossing the poster repeats the role the bar above
-           already states, the way a deck signs its own cover. It lives in a
-           pseudo-element, so the document says it once. -->
-      <div class="rise sig sig-role">
-        <h1 class="name display-xl"><span class="block">Nicolò</span><span class="block">Rengifo</span></h1>
-      </div>
-
-      <div class="mt-[clamp(2.5rem,5vw,4rem)] flex flex-wrap items-end justify-between gap-x-12 gap-y-8">
-        <p class="rise max-w-[46ch] text-[clamp(1.0625rem,1.5vw,1.25rem)] leading-[1.5] tracking-[-0.01em]" style="animation-delay:140ms">I build multi-tenant web platforms: backend, visual editor, theme system, deploy. Working on the web since 2020, mostly PHP and Vue. Lately a lot of my time goes to AI tooling and automation.</p>
-
-        <div class="rise flex flex-wrap items-center gap-x-6 gap-y-2" style="animation-delay:200ms">
-          <a class="press solid" href="mailto:nicogifo2000@gmail.com">Email</a>
-          <a class="press link mono" href="https://www.linkedin.com/in/nicol%C3%B2rengifo/" rel="me">LinkedIn</a>
-          <a class="press link mono" href="https://github.com/OhhNico" rel="me">GitHub</a>
-        </div>
-      </div>
-
-      <!-- The sheet's own index: six labels in a ruled band, the current one
-           printed in reverse. The printed numbers are generated content, so
-           the document text stays the published copy. -->
-      <nav class="rise mt-[clamp(2.75rem,5vw,4rem)]" aria-label="Sections" style="animation-delay:260ms">
-        <ol class="strip">
-          <li><a class="press" href="#top">Intro</a></li>
-          <li><a class="press" href="#work">What I work on</a></li>
-          <li><a class="press" href="#stack">Stack</a></li>
-          <li><a class="press" href="#experience">Experience</a></li>
-          <li><a class="press" href="#currently">Currently</a></li>
-          <li><a class="press" href="#contact">Contact</a></li>
-        </ol>
-        <button class="key mt-6" type="button" data-advance>Next section</button>
-      </nav>
+  <div class="cover-stage relative">
+    <svg class="star absolute right-0 top-[clamp(0.75rem,3vh,2rem)]" style="--star:clamp(2.5rem,5.5vw,5rem)" viewBox="0 0 96 96" aria-hidden="true" fill="currentColor"><path d="M43 0h10v96H43z"/><path d="M0 43h96v10H0z"/><path d="m13.4 20.5 7.1-7.1 62.1 62.1-7.1 7.1z"/><path d="m82.6 13.4 7.1 7.1-62.1 62.1-7.1-7.1z"/></svg>
+    <div class="rise sig sig-role" style="animation-delay:60ms">
+      <h1 class="display-xl"><span class="block">Nicolò</span><span class="block">Rengifo</span></h1>
     </div>
   </div>
+
+  <div class="cover-foot pb-[clamp(1.25rem,3vh,2rem)]">
+    <p class="rise max-w-[40ch] text-left text-[1.0625rem] leading-[1.5]" style="animation-delay:140ms">I build multi-tenant web platforms: backend, visual editor, theme system, deploy. Working on the web since 2020, mostly PHP and Vue. Lately a lot of my time goes to AI tooling and automation.</p>
+    <div class="rise flex flex-wrap items-center gap-x-6 gap-y-2" style="animation-delay:200ms">
+      <a class="press solid" href="mailto:nicogifo2000@gmail.com">Email</a>
+      <a class="press link mono" href="https://www.linkedin.com/in/nicol%C3%B2rengifo/" rel="me">LinkedIn</a>
+      <a class="press link mono" href="https://github.com/OhhNico" rel="me">GitHub</a>
+    </div>
+  </div>
+
+  <!-- The list rises; the nav itself must not: a filling translate animation
+       keeps acting as containing block, and the fixed clicker inside would
+       anchor to the nav instead of the viewport. -->
+  <nav aria-label="Sections">
+    <ol class="rise strip" style="animation-delay:260ms">
+      <li><a class="press" href="#top">Intro</a></li>
+      <li><a class="press" href="#work">What I work on</a></li>
+      <li><a class="press" href="#stack">Stack</a></li>
+      <li><a class="press" href="#experience">Experience</a></li>
+      <li><a class="press" href="#currently">Currently</a></li>
+      <li><a class="press" href="#contact">Contact</a></li>
+    </ol>
+    <!-- The deck's clicker: fixed low right by the stylesheet, always in
+         reach, and the counter is its readout. -->
+    <button class="key" type="button" data-advance>Next section</button>
+  </nav>
 </header>
 
 <main>
 
-  <section id="work" class="reverse" data-section-index="1">
-    <div class="wrap py-[clamp(3.5rem,8vw,7rem)]">
-      <div class="flex items-start justify-between gap-6">
-        <h2 class="heading" tabindex="-1">What I work on</h2>
-        <svg class="star mt-2" style="--star:clamp(1.75rem,3.5vw,3rem)" viewBox="0 0 96 96" aria-hidden="true" fill="currentColor"><path d="M43 0h10v96H43z"/><path d="M0 43h96v10H0z"/><path d="m13.4 20.5 7.1-7.1 62.1 62.1-7.1 7.1z"/><path d="m82.6 13.4 7.1 7.1-62.1 62.1-7.1-7.1z"/></svg>
-      </div>
-      <ul role="list" class="mt-[clamp(2rem,4vw,3.5rem)] border-b border-rule">
-        <li class="spec-row">
-          <div class="index-cell"><h3 class="subhead">Multi-tenant SaaS</h3></div>
-          <p class="max-w-[54ch] text-muted">Tenant isolation, subscription billing, roles and permissions, media pipelines.</p>
-        </li>
-        <li class="spec-row">
-          <div class="index-cell"><h3 class="subhead">Visual editors and theme systems</h3></div>
-          <p class="max-w-[54ch] text-muted">Drag and drop page building on a GrapesJS fork, with a themeable output layer.</p>
-        </li>
-        <li class="spec-row">
-          <div class="index-cell"><h3 class="subhead">Campaign platforms</h3></div>
-          <p class="max-w-[54ch] text-muted">Prize campaigns that run for a few weeks. Entry validation, draws, compliance.</p>
-        </li>
-        <li class="spec-row">
-          <div class="index-cell"><h3 class="subhead">AI tooling</h3></div>
-          <p class="max-w-[54ch] text-muted">MCP servers, PHP agent frameworks, and automation around design and asset work.</p>
-        </li>
-      </ul>
+  <!-- Slide 2, the framed grid. -->
+  <section id="work" class="slide slide-band reverse" data-section-index="1">
+    <div class="band">
+      <h2 class="title" tabindex="-1">What I work on</h2>
+      <svg class="star mb-2" style="--star:clamp(2rem,4.5vw,4rem)" viewBox="0 0 96 96" aria-hidden="true" fill="currentColor"><path d="M43 0h10v96H43z"/><path d="M0 43h96v10H0z"/><path d="m13.4 20.5 7.1-7.1 62.1 62.1-7.1 7.1z"/><path d="m82.6 13.4 7.1 7.1-62.1 62.1-7.1-7.1z"/></svg>
     </div>
+    <ul role="list" class="cells">
+      <li class="cell">
+        <h3 class="subhead">Multi-tenant SaaS</h3>
+        <p class="max-w-[48ch] text-muted">Tenant isolation, subscription billing, roles and permissions, media pipelines.</p>
+      </li>
+      <li class="cell">
+        <h3 class="subhead">Visual editors and theme systems</h3>
+        <p class="max-w-[48ch] text-muted">Drag and drop page building on a GrapesJS fork, with a themeable output layer.</p>
+      </li>
+      <li class="cell">
+        <h3 class="subhead">Campaign platforms</h3>
+        <p class="max-w-[48ch] text-muted">Prize campaigns that run for a few weeks. Entry validation, draws, compliance.</p>
+      </li>
+      <li class="cell">
+        <h3 class="subhead">AI tooling</h3>
+        <p class="max-w-[48ch] text-muted">MCP servers, PHP agent frameworks, and automation around design and asset work.</p>
+      </li>
+    </ul>
   </section>
 
-  <section id="stack" data-section-index="2">
-    <div class="wrap py-[clamp(3.5rem,8vw,7rem)]">
-      <div class="flex items-start justify-between gap-6">
-        <h2 class="heading" tabindex="-1">Stack</h2>
-        <svg class="star mt-2" style="--star:clamp(1.75rem,3.5vw,3rem)" viewBox="0 0 96 96" aria-hidden="true" fill="currentColor"><path d="M43 0h10v96H43z"/><path d="M0 43h96v10H0z"/><path d="m13.4 20.5 7.1-7.1 62.1 62.1-7.1 7.1z"/><path d="m82.6 13.4 7.1 7.1-62.1 62.1-7.1-7.1z"/></svg>
+  <!-- Slide 3, the wall. -->
+  <section id="stack" class="slide slide-fill" data-section-index="2">
+    <div class="wall">
+      <div class="wall-title flex items-start justify-between gap-6">
+        <h2 class="title" tabindex="-1">Stack</h2>
+        <svg class="star" style="--star:clamp(2rem,4.5vw,4rem)" viewBox="0 0 96 96" aria-hidden="true" fill="currentColor"><path d="M43 0h10v96H43z"/><path d="M0 43h96v10H0z"/><path d="m13.4 20.5 7.1-7.1 62.1 62.1-7.1 7.1z"/><path d="m82.6 13.4 7.1 7.1-62.1 62.1-7.1-7.1z"/></svg>
       </div>
-      <dl class="mt-[clamp(2rem,4vw,3.5rem)] border-b border-rule">
-        <div class="spec-row">
-          <dt class="mono pt-1.5 text-muted">Backend</dt>
-          <dd class="flex flex-wrap gap-2"><span class="chip">PHP</span><span class="chip">Laravel</span><span class="chip">Inertia</span><span class="chip">MySQL</span><span class="chip">Python</span></dd>
+      <dl class="wall-groups">
+        <div class="group">
+          <dt class="mono text-muted">Backend</dt>
+          <dd class="chips"><span class="chip">PHP</span><span class="chip">Laravel</span><span class="chip">Inertia</span><span class="chip">MySQL</span><span class="chip">Python</span></dd>
         </div>
-        <div class="spec-row">
-          <dt class="mono pt-1.5 text-muted">Frontend</dt>
-          <dd class="flex flex-wrap gap-2"><span class="chip">Vue 3</span><span class="chip">Tailwind</span><span class="chip">SCSS</span><span class="chip">Vite</span><span class="chip">D3</span><span class="chip">GSAP</span></dd>
+        <div class="group">
+          <dt class="mono text-muted">Frontend</dt>
+          <dd class="chips"><span class="chip">Vue 3</span><span class="chip">Tailwind</span><span class="chip">SCSS</span><span class="chip">Vite</span><span class="chip">D3</span><span class="chip">GSAP</span></dd>
         </div>
-        <div class="spec-row">
-          <dt class="mono pt-1.5 text-muted">AI</dt>
-          <dd class="flex flex-wrap gap-2"><span class="chip">MCP</span><span class="chip">Neuron AI</span><span class="chip">Anthropic SDK</span><span class="chip">Playwright</span></dd>
+        <div class="group">
+          <dt class="mono text-muted">AI</dt>
+          <dd class="chips"><span class="chip">MCP</span><span class="chip">Neuron AI</span><span class="chip">Anthropic SDK</span><span class="chip">Playwright</span></dd>
         </div>
-        <div class="spec-row">
-          <dt class="mono pt-1.5 text-muted">Also</dt>
-          <dd class="flex flex-wrap gap-2"><span class="chip">WordPress</span><span class="chip">Webflow</span><span class="chip">Figma</span><span class="chip">DNS</span><span class="chip">SEO</span></dd>
+        <div class="group">
+          <dt class="mono text-muted">Also</dt>
+          <dd class="chips"><span class="chip">WordPress</span><span class="chip">Webflow</span><span class="chip">Figma</span><span class="chip">DNS</span><span class="chip">SEO</span></dd>
         </div>
       </dl>
     </div>
   </section>
 
-  <section id="experience" class="reverse" data-section-index="3">
-    <div class="wrap py-[clamp(3.5rem,8vw,7rem)]">
-      <div class="flex items-start justify-between gap-6">
-        <h2 class="heading" tabindex="-1">Experience</h2>
-        <svg class="star mt-2" style="--star:clamp(1.75rem,3.5vw,3rem)" viewBox="0 0 96 96" aria-hidden="true" fill="currentColor"><path d="M43 0h10v96H43z"/><path d="M0 43h96v10H0z"/><path d="m13.4 20.5 7.1-7.1 62.1 62.1-7.1 7.1z"/><path d="m82.6 13.4 7.1 7.1-62.1 62.1-7.1-7.1z"/></svg>
+  <!-- Slide 4, the split. -->
+  <section id="experience" class="slide slide-fill reverse" data-section-index="3">
+    <div class="split">
+      <div class="sig sig-name">
+        <h2 class="title" tabindex="-1">Experience</h2>
       </div>
-      <ol role="list" class="mt-[clamp(2rem,4vw,3.5rem)] border-b border-rule">
-        <li class="spec-row">
-          <p class="mono pt-2 text-muted">2024 to now</p>
-          <div>
-            <h3 class="subhead">Wink SRL</h3>
-            <p class="mt-3 max-w-[58ch] text-muted">Multi-tenant Laravel platform with a visual page editor and a theme system on top of it. Vue 3 dashboards with interactive charts, campaign sites, chatbot integrations, plus DNS and hosting.</p>
-          </div>
-        </li>
-        <li class="spec-row">
-          <p class="mono pt-2 text-muted">2020 to 2024</p>
-          <div>
-            <h3 class="subhead">SDV</h3>
-            <p class="mt-3 max-w-[58ch] text-muted">Client web work: responsive front ends, pages built to rank in search, and long running maintenance for manufacturing and B2B clients.</p>
-          </div>
-        </li>
-      </ol>
+      <div>
+        <div class="role">
+          <p class="mono text-muted">2024 to now</p>
+          <h3 class="subhead mt-3">Wink SRL</h3>
+          <p class="mt-3 max-w-[52ch] text-muted">Multi-tenant Laravel platform with a visual page editor and a theme system on top of it. Vue 3 dashboards with interactive charts, campaign sites, chatbot integrations, plus DNS and hosting.</p>
+        </div>
+        <div class="role">
+          <p class="mono text-muted">2020 to 2024</p>
+          <h3 class="subhead mt-3">SDV</h3>
+          <p class="mt-3 max-w-[52ch] text-muted">Client web work: responsive front ends, pages built to rank in search, and long running maintenance for manufacturing and B2B clients.</p>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section id="currently" data-section-index="4">
-    <div class="wrap py-[clamp(3.5rem,8vw,7rem)]">
-      <div class="flex items-start justify-between gap-6">
-        <h2 class="heading" tabindex="-1">Currently</h2>
-        <svg class="star mt-2" style="--star:clamp(1.75rem,3.5vw,3rem)" viewBox="0 0 96 96" aria-hidden="true" fill="currentColor"><path d="M43 0h10v96H43z"/><path d="M0 43h96v10H0z"/><path d="m13.4 20.5 7.1-7.1 62.1 62.1-7.1 7.1z"/><path d="m82.6 13.4 7.1 7.1-62.1 62.1-7.1-7.1z"/></svg>
-      </div>
-      <dl class="mt-[clamp(2rem,4vw,3.5rem)] border-b border-rule">
-        <div class="spec-row">
-          <dt class="mono pt-1.5 text-muted">learning</dt>
-          <dd class="text-[1.125rem]">MCP servers, agent orchestration</dd>
-        </div>
-        <div class="spec-row">
-          <dt class="mono pt-1.5 text-muted">building</dt>
-          <dd class="text-[1.125rem]">a themeable multi-tenant suite</dd>
-        </div>
-        <div class="spec-row">
-          <dt class="mono pt-1.5 text-muted">languages</dt>
-          <dd class="text-[1.125rem]">Italian (native), English B2, Spanish B2</dd>
-        </div>
-      </dl>
+  <!-- Slide 5, the columns. -->
+  <section id="currently" class="slide slide-band" data-section-index="4">
+    <div class="band flex-row-reverse">
+      <h2 class="title" tabindex="-1">Currently</h2>
+      <svg class="star mb-2" style="--star:clamp(2rem,4.5vw,4rem)" viewBox="0 0 96 96" aria-hidden="true" fill="currentColor"><path d="M43 0h10v96H43z"/><path d="M0 43h96v10H0z"/><path d="m13.4 20.5 7.1-7.1 62.1 62.1-7.1 7.1z"/><path d="m82.6 13.4 7.1 7.1-62.1 62.1-7.1-7.1z"/></svg>
     </div>
+    <dl class="cols">
+      <div class="col">
+        <dt class="mono text-muted">learning</dt>
+        <dd>MCP servers, agent orchestration</dd>
+      </div>
+      <div class="col">
+        <dt class="mono text-muted">building</dt>
+        <dd>a themeable multi-tenant suite</dd>
+      </div>
+      <div class="col">
+        <dt class="mono text-muted">languages</dt>
+        <dd>Italian (native), English B2, Spanish B2</dd>
+      </div>
+    </dl>
   </section>
 
-  <section id="contact" class="reverse" data-section-index="5">
-    <div class="wrap pt-[clamp(3.5rem,8vw,7rem)] pb-[clamp(3rem,6vw,5rem)]">
-      <!-- The signature signs the last panel with the name the page opened
-           with. A pseudo-element repetition, so the document says it once. -->
+  <!-- Slide 6, the finale. -->
+  <section id="contact" class="slide slide-fill reverse" data-section-index="5">
+    <div class="finale">
       <div class="sig sig-name">
         <div class="flex items-start justify-between gap-6">
-          <h2 class="heading" tabindex="-1">Contact</h2>
-          <svg class="star mt-2" style="--star:clamp(1.75rem,3.5vw,3rem)" viewBox="0 0 96 96" aria-hidden="true" fill="currentColor"><path d="M43 0h10v96H43z"/><path d="M0 43h96v10H0z"/><path d="m13.4 20.5 7.1-7.1 62.1 62.1-7.1 7.1z"/><path d="m82.6 13.4 7.1 7.1-62.1 62.1-7.1-7.1z"/></svg>
+          <h2 class="title" tabindex="-1">Contact</h2>
+          <svg class="star" style="--star:clamp(2rem,4.5vw,4rem)" viewBox="0 0 96 96" aria-hidden="true" fill="currentColor"><path d="M43 0h10v96H43z"/><path d="M0 43h96v10H0z"/><path d="m13.4 20.5 7.1-7.1 62.1 62.1-7.1 7.1z"/><path d="m82.6 13.4 7.1 7.1-62.1 62.1-7.1-7.1z"/></svg>
         </div>
       </div>
 
-      <div class="mt-[clamp(2.5rem,5vw,4rem)] flex flex-wrap items-center gap-x-6 gap-y-4 border-t border-rule pt-8">
-        <a class="press link max-w-full [overflow-wrap:anywhere] font-sans text-[clamp(1.375rem,4.5vw,2.75rem)] font-bold leading-[1.15] tracking-[-0.02em] [text-decoration-thickness:0.05em] [text-underline-offset:0.2em]" href="mailto:nicogifo2000@gmail.com">nicogifo2000@gmail.com</a>
+      <div class="flex flex-wrap items-center gap-x-8 gap-y-5">
+        <a class="press link address max-w-full [overflow-wrap:anywhere] [text-decoration-thickness:0.045em] [text-underline-offset:0.18em]" href="mailto:nicogifo2000@gmail.com">nicogifo2000@gmail.com</a>
         <button class="copy" type="button" data-copy="nicogifo2000@gmail.com" aria-label="Copy email address">
           <span data-idle>Copy</span>
           <span data-done aria-hidden="true">Copied</span>
@@ -206,12 +187,12 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentEl
         <p class="sr-only" role="status" data-copy-status></p>
       </div>
 
-      <div class="mt-8 flex flex-wrap items-center gap-x-7 gap-y-2">
+      <div class="flex flex-wrap items-center gap-x-7 gap-y-2">
         <a class="press link mono" href="https://www.linkedin.com/in/nicol%C3%B2rengifo/" rel="me">LinkedIn</a>
         <a class="press link mono" href="https://github.com/OhhNico" rel="me">GitHub</a>
       </div>
 
-      <div class="mt-[clamp(3.5rem,7vw,6rem)] flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2 border-t border-rule pt-7">
+      <div class="finale-foot">
         <p class="mono text-muted">Legnano, Italy</p>
         <p class="mono text-muted">Bricolage Grotesque, Chivo Mono, Mrs Saint Delafield, one stylesheet and a kilobyte of script, all served from here.</p>
       </div>
