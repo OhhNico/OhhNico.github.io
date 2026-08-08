@@ -24,6 +24,7 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentEl
 <!-- The chrome. A translucent layer the content scrolls under; the current
      section is named here, which is the page answering "where am I". -->
 <nav class="gnav" aria-label="Sections">
+  <div class="gnav-material" aria-hidden="true"></div>
   <div class="wrap gnav-row">
     <a class="gnav-name press" href="#top">Nicolò Rengifo</a>
     <ul class="gnav-links" role="list">
@@ -40,21 +41,21 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentEl
 
 <header id="top" data-section-index="0">
   <div class="wrap pt-[clamp(3.5rem,9vh,6.5rem)] pb-[clamp(3rem,7vh,5.5rem)] text-center">
-    <p class="rise eyeline flex flex-wrap items-baseline justify-center gap-x-3">
+    <p class="eyeline flex flex-wrap items-baseline justify-center gap-x-3" data-load>
       <span>Full-stack web developer</span>
       <span aria-hidden="true">/</span>
       <span>Legnano, Italy</span>
     </p>
-    <h1 class="rise display mx-auto mt-3 max-w-[16ch]" style="animation-delay:60ms">Nicolò Rengifo</h1>
-    <p class="rise sub mx-auto mt-[1.125rem] max-w-[54ch]" style="animation-delay:120ms">I build multi-tenant web platforms: backend, visual editor, theme system, deploy. Working on the web since 2020, mostly PHP and Vue. Lately a lot of my time goes to AI tooling and automation.</p>
-    <div class="rise mt-7 flex flex-wrap items-center justify-center gap-x-6 gap-y-2" style="animation-delay:180ms">
+    <h1 class="display mx-auto mt-3 max-w-[16ch]" data-load>Nicolò Rengifo</h1>
+    <p class="sub mx-auto mt-[1.125rem] max-w-[54ch]" data-load>I build multi-tenant web platforms: backend, visual editor, theme system, deploy. Working on the web since 2020, mostly PHP and Vue. Lately a lot of my time goes to AI tooling and automation.</p>
+    <div class="mt-7 flex flex-wrap items-center justify-center gap-x-6 gap-y-2" data-load>
       <a class="pill press" href="mailto:nicogifo2000@gmail.com">Email</a>
       <a class="tlink press" href="https://www.linkedin.com/in/nicol%C3%B2rengifo/" rel="me">LinkedIn</a>
       <a class="tlink press" href="https://github.com/OhhNico" rel="me">GitHub</a>
     </div>
     <!-- The same advance control as every build before it, spoken in the
          platform's accent: a quiet link whose chevron points the way. -->
-    <div class="rise mt-4 flex justify-center" style="animation-delay:240ms">
+    <div class="mt-4 flex justify-center" data-load>
       <button class="tlink press [&::after]:rotate-90" type="button" data-advance>Next section</button>
     </div>
   </div>
@@ -173,7 +174,7 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentEl
   <div class="wrap">
     <div class="footer-row">
       <p>Legnano, Italy</p>
-      <p>Set in the system typeface, one stylesheet and a kilobyte of script, all served from here.</p>
+      <p>Set in the system typeface, one stylesheet and GSAP in a 28 KB script, all served from here.</p>
     </div>
   </div>
 </footer>

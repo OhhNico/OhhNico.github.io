@@ -101,12 +101,20 @@
     position: sticky;
     top: 0;
     z-index: var(--z-sticky);
+  }
+  /* The material is its own layer so scroll can wear it: at rest, and for
+     any reader without the script, it is simply on. The motion module fades
+     it with scroll position; opacity only, never layout. */
+  .gnav-material {
+    position: absolute;
+    inset: 0;
     background: color-mix(in srgb, #ffffff 72%, transparent);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     backdrop-filter: blur(20px) saturate(180%);
     border-bottom: 1px solid color-mix(in srgb, #000000 8%, transparent);
   }
   .gnav-row {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 1.5rem;
@@ -330,16 +338,12 @@
 }
 
 @layer utilities {
-  /* Load start states, armed before first paint by the two-line head script,
-     so the first painted frame IS the first frame of the animation. No
-     script, no class, and the page renders at rest: the good path, not the
-     degraded one. Transform only, no opacity ramp: whatever captures the
-     first frame gets a full page. */
-  .js .rise {
-    translate: 0 14px;
-    animation: rise 560ms var(--ease-out) both;
-  }
-  @keyframes rise { to { translate: none; } }
+  /* Load start states, armed before first paint by the two-line head script.
+     The offset is transform only, no opacity ramp, so whatever captures the
+     first frame gets a full page; the motion module then plays the arrival
+     from exactly this state and clears itself. No script, no class, and the
+     page renders at rest: the good path, not the degraded one. */
+  .js [data-load] { transform: translateY(18px); }
 
   /* Reduced motion removes movement and keeps opacity and colour, which is
      the part that aids comprehension. */
@@ -355,11 +359,11 @@
   /* Transparency and contrast are separate requests and get separate
      answers: a frosted-solid chrome for one, drawn edges for the other. */
   @media (prefers-reduced-transparency: reduce) {
-    .gnav { background: #ffffff; -webkit-backdrop-filter: none; backdrop-filter: none; }
+    .gnav-material { background: #ffffff; -webkit-backdrop-filter: none; backdrop-filter: none; opacity: 1 !important; }
   }
   @media (prefers-contrast: more) {
     .card, .pill-quiet, .chip { border: 1px solid var(--color-secondary); }
-    .gnav { background: #ffffff; -webkit-backdrop-filter: none; backdrop-filter: none; border-bottom-color: var(--color-ink); }
+    .gnav-material { background: #ffffff; -webkit-backdrop-filter: none; backdrop-filter: none; border-bottom-color: var(--color-ink); opacity: 1 !important; }
   }
 
   /* On paper the page is a document: no chrome, no controls, flat cards. */

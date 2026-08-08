@@ -15,6 +15,7 @@
   "devDependencies": {
     "@tailwindcss/cli": "4.3.3",
     "esbuild": "0.25.12",
+    "gsap": "3.15.0",
     "tailwindcss": "4.3.3"
   }
 }

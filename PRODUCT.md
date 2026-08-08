@@ -41,13 +41,13 @@ Di sistema: la pagina parla la lingua della piattaforma. Il carattere è quello 
 
 1. **La pagina è la prova.** Con zero repository pubblici, l'unica dimostrazione di competenza disponibile è l'artefatto che il visitatore ha davanti. Ogni scelta si giudica così: aggiunge o toglie prova?
 
-2. **Il movimento ha una causa.** Le parti si muovono perché qualcosa le ha spinte: un tasto premuto, una sezione attraversata, una copia riuscita. Mai perché una sezione è entrata nel viewport: un reveal per ogni sezione è il tell più riconoscibile del genere e non racconta nessun rapporto causa-effetto.
+2. **Il movimento ha una causa.** Le parti si muovono perché qualcosa le ha spinte: un tasto premuto, una copia riuscita, o lo scroll stesso usato come playhead. Gli scrub sono tween GSAP in pausa il cui progress è la posizione di scroll, quindi tornano indietro quando il lettore torna indietro; il render di un tween in pausa è sincrono e non chiede frame. Mai un reveal che scatta una volta perché una sezione è entrata nel viewport: quello non racconta nessun rapporto causa-effetto.
 
 3. **Il gioco non è mai un pedaggio.** Il contenuto sta nel DOM dall'inizio e si legge tutto senza toccare niente. Chi ha fretta, chi usa uno screen reader e chi ha JavaScript spento ricevono la stessa pagina, non una versione mutilata.
 
 4. **Il colore è interazione.** L'inchiostro su bianco porta tutto il contenuto; il blu appare solo su ciò che risponde al tocco: pill, link, focus, selezione, lo stato copiato. Una sola card stampa scura, per separare gli attrezzi dal resto. "Dove sono" lo dice il chrome con la voce corrente in evidenza, non un colore sparso in pagina.
 
-5. **Niente che possa marcire.** L'artefatto pubblicato non fa una sola richiesta fuori dal proprio host e non contiene librerie runtime: un foglio di stile e un kilobyte di script. I build step sono ammessi, le dipendenze runtime da terzi no: se fra due anni la toolchain non installa più, la pagina servita deve restare identica.
+5. **Niente che possa marcire.** L'artefatto pubblicato non fa una sola richiesta fuori dal proprio host: un foglio di stile e uno script con GSAP compilato dentro da esbuild, servito da qui come tutto il resto. I build step sono ammessi, le richieste runtime a terzi no: se fra due anni la toolchain non installa più, la pagina servita deve restare identica. Il ticker di GSAP dorme quando la timeline globale è vuota: una pagina ferma non chiede frame, misurato dai check 3 e 12.
 
 ## Accessibility & Inclusion
 
