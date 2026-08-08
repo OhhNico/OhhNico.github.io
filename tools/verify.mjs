@@ -264,9 +264,10 @@ let bytes = [];
 
 /* ---- 12. Still after interaction -----------------------------------------
    Check 3 measures a page nobody touched. This one walks the page the way a
-   reader does, advancing through every section and copying the address, and
-   then requires the same silence: interaction may animate, but when it ends,
-   the page stops asking for frames. */
+   reader does, through the chrome that is always on screen: every nav link
+   in order, then the copy button, and then it requires the same silence:
+   interaction may animate, but when it ends, the page stops asking for
+   frames. The chrome must also still answer "where am I" correctly. */
 {
   const p = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   await p.addInitScript(() => {
@@ -276,8 +277,9 @@ let bytes = [];
   });
   await p.goto(URL_, { waitUntil: "load" });
   await p.waitForTimeout(1200);
-  for (let i = 0; i < 5; i++) {
-    await p.click("[data-advance]");
+  const links = await p.locator(".gnav-links a").count();
+  for (let i = 0; i < links; i++) {
+    await p.locator(".gnav-links a").nth(i).click();
     await p.waitForTimeout(500);
   }
   await p.click("[data-copy]").catch(() => {});
@@ -285,9 +287,9 @@ let bytes = [];
   const before = await p.evaluate(() => window.__raf);
   await p.waitForTimeout(2000);
   const after = await p.evaluate(() => window.__raf);
-  const counter = await p.locator("[data-counter]").textContent();
-  record(12, "Still after walking the whole page", after - before === 0 && counter === "6",
-    `counter reads ${counter} / 6 after five advances, ${after - before} requestAnimationFrame calls in the 2s after interaction ended`);
+  const section = await p.evaluate(() => document.documentElement.dataset.section);
+  record(12, "Still after walking the whole page", after - before === 0 && section === "contact",
+    `current section is "${section}" after walking all ${links} nav links, ${after - before} requestAnimationFrame calls in the 2s after interaction ended`);
   await p.close();
 }
 

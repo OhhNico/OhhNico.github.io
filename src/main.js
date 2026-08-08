@@ -1,61 +1,84 @@
-/* The whole script. The document owns scroll and publishes one number, the
-   active section, and that number drives three readouts: the counter, the
-   rail, and the current row of the index. Nothing here runs per frame; every
-   line below executes on a discrete event and then the page is still. */
+/* The whole script. The document owns scroll and publishes one value, the
+   current section, and that value drives one readout: the chrome names where
+   you are. Nothing here runs per frame; every line executes on a discrete
+   event and then the page is still. */
 
 const sections = [...document.querySelectorAll("[data-section-index]")]
   .sort((a, b) => a.dataset.sectionIndex - b.dataset.sectionIndex);
-const tocLinks = [...document.querySelectorAll("nav ol a[href^='#']")];
-const ticks = [...document.querySelectorAll(".rail-tick")];
-const counter = document.querySelector("[data-counter]");
+const navLinks = [...document.querySelectorAll(".gnav-links a")];
 
 let active = -1;
+/* The advance cursor follows the reader while they scroll, and advances one
+   step per press even when pressed faster than the scroll settles: a click
+   mid-flight must not re-target the section already being flown to. */
+let cursor = 0;
 
 function setActive(index) {
   if (index === active) return;
   active = index;
-  /* The root carries the current section's id, which is how the rail knows to
-     restate itself in the plate's palette when it floats over the plate. */
+  cursor = index;
   document.documentElement.dataset.section = sections[index].id;
-  if (counter) counter.textContent = String(index + 1);
-  ticks.forEach((tick, i) => tick.toggleAttribute("data-on", i === index));
-  tocLinks.forEach((link, i) => {
+  navLinks.forEach((link, i) => {
     if (i === index) link.setAttribute("aria-current", "true");
     else link.removeAttribute("aria-current");
   });
 }
 
-/* The browser decides which section is active, off the main thread, instead of
-   a scroll handler doing arithmetic on every event. The margin puts the line at
-   the middle of the viewport: a section is active once it has crossed the
-   reader's centre, not when a pixel of it appears. */
+/* The browser decides which sections sit on the viewport's centre line, off
+   the main thread. On a board two cards share a row, so two sections can sit
+   on the line at once: the set keeps them all and the lowest index wins,
+   which is deterministic instead of an order-of-events coin toss.
+
+   The centre line has a blind spot: a short closing section above a short
+   footer can never reach it, because the page runs out of scroll first. So a
+   second observer watches the footer, and while the footer is fully in view
+   the reader is at the end and the last section is the current one. */
+const online = new Set();
+let atEnd = false;
+
+function recompute() {
+  if (atEnd) setActive(sections.length - 1);
+  else if (online.size) setActive(Math.min(...online));
+}
+
 const observer = new IntersectionObserver((entries) => {
   for (const entry of entries) {
-    if (entry.isIntersecting) setActive(Number(entry.target.dataset.sectionIndex));
+    const index = Number(entry.target.dataset.sectionIndex);
+    if (entry.isIntersecting) online.add(index);
+    else online.delete(index);
   }
+  recompute();
 }, { rootMargin: "-50% 0px -50% 0px", threshold: 0 });
 
 for (const section of sections) observer.observe(section);
 
-/* Deep link. Landing on #stack should read 3 / 6 from the first frame, not
-   perform the catch-up. */
+const footer = document.querySelector("footer");
+const endObserver = new IntersectionObserver((entries) => {
+  for (const entry of entries) atEnd = entry.intersectionRatio >= 0.99;
+  recompute();
+}, { threshold: [0, 0.99] });
+if (footer) endObserver.observe(footer);
+
+/* Deep link. Landing on #stack should name Stack in the chrome from the
+   first frame, not perform the catch-up. */
 const landed = sections.findIndex((s) => s.id === (location.hash || "").slice(1));
 setActive(landed >= 0 ? landed : 0);
 
-/* The key. Scroll obeys the stylesheet, which is where reduced motion already
-   turned smooth into auto, and focus moves with the reader so the next Tab
-   starts from the section they are looking at, not the one they left. */
+/* The advance link. Scroll obeys the stylesheet, where reduced motion
+   already turned smooth into auto, and focus moves with the reader so the
+   next Tab starts from where they are looking. */
 const advance = document.querySelector("[data-advance]");
 advance?.addEventListener("click", () => {
-  const next = sections[Math.min(active + 1, sections.length - 1)];
-  next?.scrollIntoView({ block: "start" });
-  next?.querySelector("h1, h2")?.focus({ preventScroll: true });
+  cursor = Math.min(cursor + 1, sections.length - 1);
+  const next = sections[cursor];
+  next.scrollIntoView({ block: "start" });
+  next.querySelector("h1, h2")?.focus({ preventScroll: true });
 });
 
 /* Copy. The state swap crossfades through a blur, because without it the two
-   words are briefly legible on top of each other and read as two objects rather
-   than one changing. Out is 140ms against 200ms in: the system responding
-   should outrun the user deciding. */
+   words are briefly legible on top of each other and read as two objects
+   rather than one changing its mind. Out is 140ms against 200ms in: the
+   system responding should outrun the user deciding. */
 const copy = document.querySelector("[data-copy]");
 const status = document.querySelector("[data-copy-status]");
 let resetTimer;
@@ -70,9 +93,9 @@ copy?.addEventListener("click", async () => {
       if (status) status.textContent = "";
     }, 2200);
   } catch {
-    /* Clipboard denied, over http, or an old browser. The address is already on
-       screen as a mailto link, so there is nothing to recover from and nothing
-       to apologise for. */
+    /* Clipboard denied, over http, or an old browser. The address is already
+       on screen as a mailto link, so there is nothing to recover from and
+       nothing to apologise for. */
     if (status) status.textContent = "Copying is blocked here. The address is the link above.";
   }
 });

@@ -2,13 +2,9 @@
 
 Everything this page loads is served from this host. Nothing here reaches a third party at runtime.
 
-## Typefaces
+## Typeface
 
-| Family | Licence | File |
-|---|---|---|
-| Bricolage Grotesque, variable, `opsz` 12-96 and `wght` 200-800 | SIL Open Font License 1.1 | `fonts/OFL-Bricolage.txt` |
-| Chivo Mono, variable | SIL Open Font License 1.1 | `fonts/OFL-ChivoMono.txt` |
-| Mrs Saint Delafield, the signature script | SIL Open Font License 1.1 | `fonts/OFL-MrsSaintDelafield.txt` |
+The system typeface of the reader's platform, by deliberate choice: it ships the optical sizing, tracking tables and legibility tuning of the device it renders on, and it costs zero bytes. No font file is served.
 
 ## Libraries
 

@@ -1,9 +1,9 @@
 {
   "name": "ohhnico-github-io",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "private": true,
   "type": "module",
-  "description": "Personal site for Nicolo Rengifo. The page is the spec sheet of its own making: white, one petrol accent, controls with travel. Tailwind compiles src/input.css to style.css and esbuild bundles src/main.js to app.js; both outputs are committed and are the only stylesheet and the only script the page loads, so the published page makes no third-party requests.",
+  "description": "Personal site for Nicolo Rengifo, spoken in the platform's language: system typeface, translucent chrome, a bento where no two cards share a layout, blue only where it responds. Tailwind compiles src/input.css to style.css and esbuild bundles src/main.js to app.js; both outputs are committed and are the only stylesheet and the only script the page loads, so the published page makes no third-party requests.",
   "scripts": {
     "build": "npm run build:css && npm run build:js",
     "build:css": "tailwindcss --input src/input.css --output style.css --minify",

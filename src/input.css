@@ -2,70 +2,48 @@
    committed: the published page loads one stylesheet from this host and makes
    no third-party request.
 
-   The page is a deck, not a document. Six slides, one per section, and no two
-   share a layout: a centred cover, a framed grid, a wall with a vertical
-   title, a half-and-half split, three columns, a signed finale. The scroll
-   snaps to slide edges where a slide fits the screen, and lets go where it
-   does not. Three rules do most of the work:
+   The page speaks the platform's language: the system typeface, white and the
+   platform grey, one blue reserved for interaction, translucent chrome the
+   content scrolls under, and a bento of rounded cards where no two cards
+   share a span or an internal layout. Three rules do most of the work here:
 
-   1. Two materials only. Paper and ink, and every slide is one printed on the
-      other. There is no accent colour: emphasis is size, weight, inversion,
-      and the one script face. A dark slide swaps the two custom properties
-      and re-tunes its mixes, because light type on ink reads dimmer than its
-      mirror.
+   1. The typeface is the system's own, deliberately: it ships optical sizing
+      and tracking tables no webfont subset matches, it renders as the reader's
+      platform intends, and it costs zero bytes. Tracking is size-specific:
+      tight on display sizes, neutral on body, never one value for all.
 
-   2. Each slide is art-directed by its own class. The shared vocabulary is
-      small (bar, title, star, script, key) and the composition is not shared
-      at all: that is what makes it a deck.
+   2. Colour means interaction. Ink on white carries all content; the blue
+      appears only on things that respond to touch. One card prints dark to
+      separate the tooling from the rest, the way the platform separates Pro.
 
-   3. Every colour below is measured on the rendered page, not calculated on
-      paper: oklch() and color-mix() resolve in the browser, and the verify
-      harness reads them back through a canvas. */
+   3. Motion starts on pointer-down, runs on transform and opacity only, and
+      never fires because a section scrolled into view. Reduced motion, reduced
+      transparency and increased contrast each get their own adaptation,
+      because they are three different requests. */
 
 @import "tailwindcss";
 
-@font-face {
-  font-family: "Bricolage Grotesque";
-  font-style: normal;
-  font-weight: 200 800;
-  font-display: swap;
-  src: url("fonts/bricolage-latin.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: "Chivo Mono";
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url("fonts/chivo-mono-latin.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
-/* The signature. Loads late by design: it decorates, so nothing waits for it. */
-@font-face {
-  font-family: "Mrs Saint Delafield";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("fonts/mrs-saint-delafield-latin.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-
 @theme {
-  --color-field: oklch(0.936 0.007 80);
-  --color-ink: oklch(0.185 0.005 80);
-  --color-muted: color-mix(in oklab, var(--color-ink) 72%, var(--color-field));
-  --color-rule: color-mix(in oklab, var(--color-ink) 18%, var(--color-field));
-  --color-rule-strong: color-mix(in oklab, var(--color-ink) 38%, var(--color-field));
+  --color-bg: #ffffff;
+  --color-surface: #f5f5f7;
+  --color-ink: #1d1d1f;
+  /* Measured against both white and the grey surface: the platform's own
+     footnote grey misses 4.5:1 on the surface, so this one sits darker. */
+  --color-secondary: #55555c;
+  --color-hairline: #d2d2d7;
+  --color-blue: #0071e3;
+  --color-blue-deep: #0066cc;
+  --color-card-dark: #1d1d1f;
+  --color-dark-secondary: #a7a7ad;
+  --color-dark-chip: #2c2c30;
 
-  --font-sans: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Chivo Mono", ui-monospace, "SFMono-Regular", monospace;
-  --font-script: "Mrs Saint Delafield", cursive;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
 
   /* Built-in CSS easings are too weak to read as intentional. */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+  --radius-card: 1.125rem;
 
   /* Semantic, so nobody ever writes 9999. */
   --z-content: 10;
@@ -78,14 +56,8 @@
   :root {
     color-scheme: light;
     scroll-behavior: smooth;
-  }
-
-  /* The deck snaps where a slide fits the screen and lets go where it cannot:
-     proximity, not mandatory, so a slide taller than a short viewport never
-     traps the reader inside it. */
-  @media (min-width: 64rem) and (min-height: 43.75rem) {
-    :root { scroll-snap-type: y proximity; }
-    .slide { scroll-snap-align: start; }
+    /* Anchored sections stop below the floating chrome, not under it. */
+    scroll-padding-top: 4rem;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -93,18 +65,20 @@
   }
 
   body {
-    background: var(--color-field);
+    background: var(--color-bg);
     color: var(--color-ink);
-    font: 400 1.0625rem/1.55 var(--font-sans);
+    /* The platform's body size and leading: 17 over 1.47. */
+    font: 400 1.0625rem/1.47 var(--font-sans);
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
   }
 
-  ::selection { background: var(--color-ink); color: var(--color-field); }
+  ::selection { background: var(--color-blue); color: #ffffff; }
 
   :focus-visible {
-    outline: 2px solid var(--color-ink);
+    outline: 2px solid var(--color-blue);
     outline-offset: 3px;
+    border-radius: 4px;
     z-index: var(--z-focus);
   }
 
@@ -113,444 +87,262 @@
 }
 
 @layer components {
-  /* A dark slide is the same slide with the materials swapped. The mixes are
-     re-tuned, not mirrored: light type on ink needs the lift. */
-  .reverse {
-    --color-field: oklch(0.185 0.005 80);
-    --color-ink: oklch(0.936 0.007 80);
-    --color-muted: color-mix(in oklab, var(--color-ink) 82%, var(--color-field));
-    --color-rule: color-mix(in oklab, var(--color-ink) 26%, var(--color-field));
-    --color-rule-strong: color-mix(in oklab, var(--color-ink) 48%, var(--color-field));
-    background: var(--color-field);
-    color: var(--color-ink);
+  .wrap {
+    width: 100%;
+    max-width: 64rem;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 4vw, 2rem);
   }
 
-  /* Every slide is a full screen when the screen allows it, and a grid whose
-     areas each slide class redraws for itself. */
-  .slide {
-    min-height: 100svh;
-    display: grid;
-    padding-inline: clamp(1.25rem, 4vw, 3.5rem);
-    /* The bottom padding is a reserved lane: the page number and the clicker
-       are fixed in the low corners, and no slide content enters their row. */
-    padding-block: clamp(1.25rem, 3vh, 2.5rem) clamp(4.5rem, 10vh, 6rem);
+  /* The chrome. A translucent layer the page scrolls under, not an opaque
+     strip that consumes it. Frostier when the reader asked transparency to
+     go away, bordered when they asked for more contrast. */
+  .gnav {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+    background: color-mix(in srgb, #ffffff 72%, transparent);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid color-mix(in srgb, #000000 8%, transparent);
   }
-  .slide-cover { grid-template-rows: auto 1fr auto auto; }
-  .slide-band { grid-template-rows: auto 1fr; }
-  .slide-fill { grid-template-rows: 1fr; }
-
-  /* The running head: ruled label bar every slide carries, like the deck. */
-  .bar {
+  .gnav-row {
     display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 0.25rem 2rem;
-    border-block: 1px solid var(--color-ink);
-    padding-block: 0.75rem;
+    align-items: center;
+    gap: 1.5rem;
+    min-height: 3rem;
   }
-
-  .mono {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-variant-numeric: tabular-nums;
-  }
-
-  /* Poster type. Weight 800 against the top of the optical axis: the face
-     pulls narrow and black, which is the deck's whole voice. Uppercase lives
-     here, never in the copy. */
-  .display-xl {
-    font-weight: 800;
-    font-size: clamp(3.5rem, 18vw, 14rem);
-    line-height: 0.82;
-    letter-spacing: -0.02em;
-    text-transform: uppercase;
-  }
-
-  .title {
-    font-weight: 800;
-    font-size: clamp(2.75rem, 8.5vw, 7.5rem);
-    line-height: 0.85;
-    letter-spacing: -0.018em;
-    text-transform: uppercase;
-  }
-
-  .subhead {
-    font-weight: 700;
-    font-size: clamp(1.25rem, 1.8vw, 1.5rem);
-    line-height: 1.15;
-    letter-spacing: -0.012em;
-  }
-
-  /* The two signatures: pseudo-element repetitions of words the page already
-     says, with empty alt text. Geometry per viewport lives here, not inline. */
-  .sig { position: relative; }
-  .sig::after {
-    content: var(--sig) / "";
-    position: absolute;
-    inset-inline-start: var(--sig-x, 50%);
-    inset-block-start: var(--sig-y, 60%);
-    transform: rotate(-6deg);
-    font-family: var(--font-script);
-    font-weight: 400;
-    font-size: var(--sig-size, clamp(2rem, 4.5vw, 3.75rem));
-    line-height: 1;
-    letter-spacing: 0;
-    text-transform: none;
-    white-space: nowrap;
-    color: var(--color-ink);
-    pointer-events: none;
-  }
-  .sig-role { --sig: "Full-stack web developer"; --sig-size: clamp(1.75rem, 6.5vw, 6.5rem); --sig-x: 12%; --sig-y: 86%; }
-  .sig-name { --sig: "Nicolò Rengifo"; --sig-size: clamp(2.25rem, 6vw, 5rem); --sig-x: 6%; --sig-y: 74%; }
-  @media (min-width: 40rem) {
-    .sig-role { --sig-x: 34%; --sig-y: 80%; }
-    .sig-name { --sig-x: 30%; --sig-y: 48%; }
-  }
-
-  /* The eight-spoke mark, drawn, because the character it resembles is an
-     emoji codepoint and this page publishes none. */
-  .star {
-    inline-size: var(--star, 3rem);
-    block-size: var(--star, 3rem);
-    flex: none;
-    color: var(--color-ink);
-  }
-
-  /* ---- Slide 1, the cover. Centred title, signature across it, quote low
-     on the left, actions low on the right, index band at the foot. ---- */
-  /* The title is centred by text-align inside a full-width, never-resizing
-     box: the optical-axis settle narrows the glyphs, and a fit-content box
-     would re-centre itself on every frame of it, which the layout-shift
-     budget correctly refuses. Glyphs may travel inside a stable box; the box
-     may not travel. */
-  .cover-stage {
-    display: grid;
-    align-content: center;
-    text-align: center;
-    padding-block: clamp(2rem, 6vh, 4rem);
-  }
-  .cover-foot {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: end;
-    justify-content: space-between;
-    gap: 1.5rem 3rem;
-    margin-top: auto;
-  }
-
-  /* The index band: the deck's own table of contents, one ruled strip, the
-     current entry printed in reverse. Numbers are generated content. */
-  .strip {
-    display: flex;
-    flex-wrap: wrap;
-    border-block: 1px solid var(--color-ink);
-    counter-reset: strip;
-  }
-  .strip li { display: flex; flex: 1 1 auto; }
-  .strip a {
-    flex: 1 1 auto;
-    justify-content: center;
+  .gnav-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    min-height: 2.75rem;
     display: inline-flex;
     align-items: center;
-    gap: 0.625rem;
-    min-height: 2.75rem;
-    padding-inline: 0.875rem;
-    font-family: var(--font-mono);
-    font-size: 0.6875rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    counter-increment: strip;
-    transition: background-color 180ms var(--ease-out), color 180ms var(--ease-out);
   }
-  .strip a::before {
-    content: counter(strip, decimal-leading-zero) / "";
-    font-size: 0.625rem;
-    color: var(--color-muted);
-    transition: color 180ms var(--ease-out);
+  .gnav-links {
+    display: none;
+    align-items: center;
+    gap: 1.75rem;
+    margin-inline: auto;
   }
-  .strip a[aria-current] { background: var(--color-ink); color: var(--color-field); }
-  .strip a[aria-current]::before { color: var(--color-field); }
-  @media (hover: hover) and (pointer: fine) {
-    .strip a:not([aria-current]):hover { background: color-mix(in oklab, var(--color-ink) 8%, var(--color-field)); }
-  }
-
-  /* ---- Slide 2, the framed grid. A title band with a heavy rule, then four
-     cells sharing borders like a printed table, each led by its index. ---- */
-  .band {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 1.5rem;
-    padding-block: clamp(1.25rem, 3vh, 2rem);
-    border-bottom: 3px solid var(--color-ink);
-  }
-  .cells {
-    display: grid;
-    counter-reset: cell;
-    border: 1px solid var(--color-rule-strong);
-    border-top: none;
-    align-self: stretch;
-  }
-  @media (min-width: 48rem) { .cells { grid-template-columns: 1fr 1fr; } }
-  .cell {
-    counter-increment: cell;
-    padding: clamp(1.25rem, 2.5vw, 2.25rem);
-    border-top: 1px solid var(--color-rule-strong);
-    display: grid;
-    align-content: start;
-    gap: 0.875rem;
-  }
-  @media (min-width: 48rem) {
-    .cell:nth-child(2n) { border-left: 1px solid var(--color-rule-strong); }
-    .cell:nth-child(1), .cell:nth-child(2) { border-top: none; }
-  }
-  @media (max-width: 47.9375rem) { .cell:first-child { border-top: none; } }
-  .cell::before {
-    content: counter(cell, decimal-leading-zero) / "";
-    font-family: var(--font-mono);
+  @media (min-width: 48rem) { .gnav-links { display: flex; } }
+  .gnav-links a {
     font-size: 0.75rem;
-    letter-spacing: 0.08em;
-    color: var(--color-muted);
+    color: var(--color-secondary);
+    transition: color 180ms var(--ease-out);
+    min-height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+  }
+  .gnav-links a[aria-current] { color: var(--color-ink); font-weight: 600; }
+  @media (hover: hover) and (pointer: fine) {
+    .gnav-links a:hover { color: var(--color-ink); }
+  }
+  /* Same 44px floor as every other target; the row grows around it. */
+  .gnav .pill { margin-left: auto; min-height: 2.75rem; padding-inline: 1rem; font-size: 0.75rem; }
+  @media (min-width: 48rem) { .gnav .pill { margin-left: 0; } }
+
+  /* Display type: the platform tightens tracking as size grows, and so does
+     this. Body stays at zero. */
+  .display {
+    font-size: clamp(2.5rem, 6.5vw, 4.75rem);
+    font-weight: 700;
+    line-height: 1.04;
+    letter-spacing: -0.021em;
   }
 
-  /* ---- Slide 3, the wall. The title reads bottom-up along the left edge on
-     wide screens, and the stack groups hang on a shared frame beside it. ---- */
-  .wall {
+  .sub {
+    font-size: clamp(1.1875rem, 2vw, 1.4375rem);
+    line-height: 1.4;
+    letter-spacing: -0.012em;
+    color: var(--color-secondary);
+  }
+
+  .headline {
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.016em;
+  }
+
+  .eyeline {
+    font-size: 0.8125rem;
+    color: var(--color-secondary);
+  }
+
+  /* Every pressable thing answers on pointer-down, instantly. */
+  .press {
+    transition: transform 100ms ease-out, background-color 180ms var(--ease-out),
+                color 180ms var(--ease-out), border-color 180ms var(--ease-out);
+    touch-action: manipulation;
+  }
+  .press:active { transform: scale(0.97); }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding-inline: 1.375rem;
+    border-radius: 980px;
+    background: var(--color-blue);
+    color: #ffffff;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .pill:hover { background: #0077ed; }
+  }
+
+  .pill-quiet {
+    display: inline-grid;
+    place-items: center;
+    min-height: 2.75rem;
+    padding-inline: 1.375rem;
+    border-radius: 980px;
+    background: #e8e8ed;
+    color: var(--color-ink);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .pill-quiet:hover { background: #dededf; }
+  }
+
+  /* The platform's link: blue, quiet, a chevron that says it goes somewhere.
+     The chevron is punctuation, not an icon, and assistive tech skips it. */
+  .tlink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    min-height: 2.75rem;
+    color: var(--color-blue-deep);
+    font-size: 1.0625rem;
+    letter-spacing: -0.01em;
+  }
+  .tlink::after { content: "\203A" / ""; font-weight: 500; transition: translate 180ms var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) {
+    .tlink:hover { text-decoration: underline; }
+    .tlink:hover::after { translate: 2px 0; }
+  }
+
+  /* The bento. One grid, six columns, and no two cards share a span or an
+     internal layout: that is the whole argument of the board. */
+  .bento {
     display: grid;
-    gap: clamp(1.5rem, 3vw, 3rem);
-    align-content: stretch;
-    padding-block: clamp(1.5rem, 4vh, 3rem);
+    gap: 1rem;
+    grid-template-columns: 1fr;
   }
-  @media (min-width: 64rem) {
-    .wall { grid-template-columns: auto 1fr; align-items: stretch; }
-    /* The title reads bottom-up from the low corner, like a spine. */
-    .wall-title {
-      writing-mode: vertical-rl;
-      rotate: 180deg;
-      align-self: end;
-    }
-  }
-  .wall-groups {
+  @media (min-width: 48rem) { .bento { grid-template-columns: repeat(6, 1fr); } }
+
+  .card {
+    border-radius: var(--radius-card);
+    background: var(--color-bg);
+    padding: clamp(1.5rem, 3vw, 2.25rem);
     display: grid;
-    gap: clamp(1.5rem, 3vw, 2.5rem);
-    align-content: center;
+    grid-template-rows: auto 1fr;
+    align-content: start;
+    gap: 1.25rem;
   }
-  @media (min-width: 48rem) { .wall-groups { grid-template-columns: 1fr 1fr; } }
-  .group { border-top: 3px solid var(--color-ink); padding-top: 1rem; display: grid; gap: 0.875rem; align-content: start; }
+  /* The wide card spreads its four entries over the height its dark
+     neighbour sets, instead of pooling them at the top of the row. */
+  #work .work-grid { align-content: space-between; }
+  .card-dark {
+    background: var(--color-card-dark);
+    color: #ffffff;
+  }
+  .card-dark .eyeline { color: var(--color-dark-secondary); }
+  .card-tint { background: #e9f1fb; }
+
+  .work-grid {
+    display: grid;
+    gap: 1.75rem 2.5rem;
+  }
+  @media (min-width: 48rem) { .work-grid { grid-template-columns: 1fr 1fr; } }
+  .work-item h3 { font-size: 1.1875rem; font-weight: 600; letter-spacing: -0.012em; }
+  .work-item p { margin-top: 0.375rem; color: var(--color-secondary); }
+
   .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
   .chip {
     display: inline-flex;
     align-items: center;
-    min-height: 2.25rem;
-    padding-inline: 0.8125rem;
-    border: 1px solid var(--color-rule-strong);
-    font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--color-ink);
+    min-height: 2.125rem;
+    padding-inline: 0.875rem;
+    border-radius: 980px;
+    background: var(--color-dark-chip);
+    color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: -0.006em;
   }
 
-  /* ---- Slide 4, the split. Title and signature hold the left half, the two
-     roles hold the right, each opened by its own date band. ---- */
-  .split {
-    display: grid;
-    gap: clamp(2rem, 4vw, 4rem);
-    align-content: center;
-    padding-block: clamp(1.5rem, 4vh, 3rem);
-  }
-  @media (min-width: 64rem) { .split { grid-template-columns: 1fr 1fr; align-items: center; } }
-  /* The split title stays one word, so it takes the size its half allows
-     rather than a break in the middle of a word. */
-  .split .title { font-size: clamp(2.5rem, 6.2vw, 5.25rem); }
-  .role { border-top: 1px solid var(--color-rule-strong); padding-top: 1.25rem; }
-  .role + .role { margin-top: clamp(1.75rem, 4vh, 3rem); }
+  .roles { display: grid; gap: 1.75rem; }
+  @media (min-width: 48rem) { .roles { grid-template-columns: 1fr 1fr; } }
+  .role h3 { font-size: 1.3125rem; font-weight: 600; letter-spacing: -0.014em; margin-top: 0.25rem; }
+  .role p:last-child { margin-top: 0.5rem; color: var(--color-secondary); }
 
-  /* ---- Slide 5, the columns. Three statements standing side by side, each
-     opened by its label, values at display weight. ---- */
-  .cols {
-    display: grid;
-    gap: clamp(1.75rem, 3.5vw, 3rem);
-    align-content: center;
-    padding-block: clamp(1.5rem, 4vh, 3rem);
-  }
-  @media (min-width: 48rem) { .cols { grid-template-columns: repeat(3, 1fr); align-items: start; } }
-  .col { border-top: 3px solid var(--color-ink); padding-top: 1.125rem; display: grid; gap: 0.875rem; align-content: start; }
-  .col dd {
-    font-weight: 700;
-    font-size: clamp(1.375rem, 2.2vw, 1.875rem);
-    line-height: 1.2;
-    letter-spacing: -0.012em;
-  }
+  .stats { display: grid; gap: 1.375rem; align-content: center; }
+  .stat dd { font-size: 1.3125rem; font-weight: 600; letter-spacing: -0.014em; margin-top: 0.25rem; }
 
-  /* ---- Slide 6, the finale. The title takes the room, the signature signs
-     it, the address is the biggest text after the name. ---- */
-  .finale {
-    display: flex;
-    flex-direction: column;
-    gap: clamp(2rem, 5vh, 3.5rem);
-    padding-block: clamp(1.5rem, 4vh, 3rem);
-  }
-  /* Auto margins above the title and above the foot: the signed block floats
-     centred, the foot rests on the reserved lane. */
-  .finale > .sig-name { margin-top: auto; }
-  .finale-foot { margin-top: auto; }
   .address {
-    font-weight: 800;
-    font-size: clamp(1.5rem, 4.6vw, 4rem);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
+    font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+    font-weight: 600;
+    letter-spacing: -0.018em;
+    line-height: 1.1;
+    color: var(--color-blue-deep);
   }
-  .finale-foot {
+  @media (hover: hover) and (pointer: fine) {
+    .address:hover { text-decoration: underline; }
+  }
+
+  .footer {
+    background: var(--color-surface);
+    color: var(--color-secondary);
+    font-size: 0.75rem;
+  }
+  .footer-row {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
     justify-content: space-between;
-    gap: 0.75rem 3rem;
-    border-top: 1px solid var(--color-rule-strong);
-    padding-top: 1rem;
-    margin-top: auto;
-  }
-
-  /* Every pressable thing. 44px minimum, and it presses. */
-  .press {
-    min-height: 2.75rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.625rem;
-    transition: translate 180ms var(--ease-out), scale 140ms var(--ease-out),
-                color 180ms var(--ease-out), border-color 180ms var(--ease-out),
-                background-color 180ms var(--ease-out),
-                text-decoration-color 180ms var(--ease-out);
-    touch-action: manipulation;
-  }
-  .press:active { scale: 0.97; }
-
-  .link {
-    text-decoration: underline;
-    text-decoration-thickness: 1.5px;
-    text-underline-offset: 0.35em;
-    text-decoration-color: var(--color-rule-strong);
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .link:hover { text-decoration-color: var(--color-ink); }
-  }
-
-  .solid {
-    background: var(--color-ink);
-    color: var(--color-field);
-    padding-inline: 1.5rem;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    border: 1px solid var(--color-ink);
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .solid:hover { background: transparent; color: var(--color-ink); }
-  }
-
-  /* The advance control is the deck's clicker: fixed low right, one key,
-     two millimetres of travel spent on press. It restates its palette over
-     dark slides the same way the counter does. */
-  .key {
-    position: fixed;
-    right: clamp(1rem, 3vw, 2.5rem);
-    bottom: clamp(1rem, 3vh, 2rem);
-    z-index: var(--z-sticky);
-    min-height: 2.75rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.625rem;
-    padding-inline: 1.125rem;
-    border: 1px solid var(--color-ink);
-    background: var(--color-field);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--color-ink);
-    box-shadow: 0 2px 0 var(--color-ink);
-    transition: translate 110ms var(--ease-out), box-shadow 110ms var(--ease-out);
-    touch-action: manipulation;
-  }
-  .key:active { translate: 0 2px; box-shadow: 0 0 0 var(--color-ink); }
-
-  /* The page number. An instrument, not navigation: aria-hidden, never
-     focusable, snapping because a smoothed gauge reports a position you are
-     not in. */
-  .counter {
-    position: fixed;
-    left: clamp(1rem, 3vw, 2.5rem);
-    bottom: clamp(1.125rem, 3vh, 2.125rem);
-    z-index: var(--z-sticky);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
-    font-variant-numeric: tabular-nums;
-    color: var(--color-muted);
-    transition: color 200ms var(--ease-out);
-  }
-
-  /* The two fixed instruments float over whichever slide is current, so over
-     the dark ones they restate themselves in the dark palette. */
-  [data-section="work"] .key, [data-section="experience"] .key, [data-section="contact"] .key,
-  [data-section="work"] .counter, [data-section="experience"] .counter, [data-section="contact"] .counter {
-    --color-field: oklch(0.185 0.005 80);
-    --color-ink: oklch(0.936 0.007 80);
-    --color-muted: color-mix(in oklab, var(--color-ink) 82%, var(--color-field));
+    gap: 0.5rem 2.5rem;
+    border-top: 1px solid var(--color-hairline);
+    padding-block: 1.125rem;
   }
 
   .copy {
-    min-height: 2.75rem;
-    display: inline-grid;
-    place-items: center;
-    padding-inline: 1.125rem;
-    border: 1px solid var(--color-rule-strong);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--color-muted);
-    background: transparent;
-    transition: color 200ms var(--ease-out), border-color 200ms var(--ease-out),
-                scale 140ms var(--ease-out);
+    transition: color 200ms var(--ease-out), background-color 200ms var(--ease-out),
+                transform 100ms ease-out;
     touch-action: manipulation;
   }
-  .copy:active { scale: 0.97; }
+  .copy:active { transform: scale(0.97); }
   .copy > span { grid-area: 1 / 1; transition: opacity 200ms var(--ease-out), filter 200ms var(--ease-out); }
-  /* Blur across the swap: without it the two words read as two objects. Exit
-     is 140ms against 200ms in: the system responding outruns the user
-     deciding. */
+  /* Blur across the swap. Without it a crossfade shows two words stacked,
+     which reads as two objects rather than one changing its mind. Exit is
+     140ms against 200ms in: the system responding outruns the user deciding. */
   .copy [data-done] { opacity: 0; filter: blur(3px); transition-duration: 140ms; }
   .copy[data-state="done"] [data-idle] { opacity: 0; filter: blur(3px); transition-duration: 140ms; }
   .copy[data-state="done"] [data-done] { opacity: 1; filter: blur(0); }
-  .copy[data-state="done"] { color: var(--color-ink); border-color: var(--color-ink); }
+  .copy[data-state="done"] { color: var(--color-blue-deep); }
 }
 
 @layer utilities {
   /* Load start states, armed before first paint by the two-line head script,
-     so the first painted frame IS the first frame of the animation. No script,
-     no class, and the page renders at rest: that is the good path, not the
-     degraded one. Transform only, no opacity ramp: whatever captures the first
-     frame gets a full page. */
+     so the first painted frame IS the first frame of the animation. No
+     script, no class, and the page renders at rest: the good path, not the
+     degraded one. Transform only, no opacity ramp: whatever captures the
+     first frame gets a full page. */
   .js .rise {
-    translate: 0 18px;
-    animation: rise 620ms var(--ease-out) both;
+    translate: 0 14px;
+    animation: rise 560ms var(--ease-out) both;
   }
   @keyframes rise { to { translate: none; } }
 
-  /* The cover name does not animate its optical axis. It did in three earlier
-     builds, and at poster size the same trick fails the layout-shift budget:
-     Chrome counts every frame of a font-variation change as a shift of the
-     text node, and at forty percent of the viewport that is 0.017 of CLS,
-     measured. The poster arrives by transform, which is exempt, and stands. */
-
-  /* Reduced motion removes movement and keeps opacity and colour. */
+  /* Reduced motion removes movement and keeps opacity and colour, which is
+     the part that aids comprehension. */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
@@ -560,12 +352,21 @@
     }
   }
 
-  /* On paper the deck is a document: one material, no instruments. */
+  /* Transparency and contrast are separate requests and get separate
+     answers: a frosted-solid chrome for one, drawn edges for the other. */
+  @media (prefers-reduced-transparency: reduce) {
+    .gnav { background: #ffffff; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  }
+  @media (prefers-contrast: more) {
+    .card, .pill-quiet, .chip { border: 1px solid var(--color-secondary); }
+    .gnav { background: #ffffff; -webkit-backdrop-filter: none; backdrop-filter: none; border-bottom-color: var(--color-ink); }
+  }
+
+  /* On paper the page is a document: no chrome, no controls, flat cards. */
   @media print {
-    .counter, .key, .copy { display: none !important; }
-    .slide { min-height: 0; }
-    .reverse { background: none; color: var(--color-ink); }
-    .reverse * { --color-field: oklch(0.936 0.007 80); --color-ink: oklch(0.185 0.005 80); }
-    .sig::after { display: none; }
+    .gnav, .copy, [data-advance] { display: none !important; }
+    .card, .card-dark, .card-tint { background: none; color: var(--color-ink); border: 1px solid var(--color-hairline); }
+    .card-dark .eyeline { color: var(--color-secondary); }
+    .chip { background: none; color: var(--color-ink); border: 1px solid var(--color-hairline); }
   }
 }
