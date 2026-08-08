@@ -2,16 +2,23 @@
    committed: the published page loads one stylesheet from this host and makes
    no third-party request.
 
-   The machine has left the room. What ships now is its spec sheet, read in
-   daylight: a white page, cold ink, and one petrol accent that behaves like
-   feedback, not like decoration. Two rules do most of the work here:
+   The page is set like an editorial deck: warm paper and near-black ink,
+   full-bleed panels that alternate between the two, display type at poster
+   size, and a signature script that crosses it. Three rules do most of the
+   work here:
 
-   1. Colour means state. The accent appears where something is current,
-      focused, done or under the pointer, and on the closing plate, which is
-      the one surface allowed to be made of it. Everything at rest is ink on
-      white.
+   1. Two materials only. Paper and ink, and every panel is one printed on the
+      other. There is no accent colour: emphasis is size, weight, inversion,
+      and the one script face. The inversion is mechanical: a dark panel swaps
+      the two custom properties and every rule, muted tone and border inside
+      recomputes itself.
 
-   2. Every colour below is measured on the rendered page, not calculated on
+   2. The script overlays live in pseudo-elements, not in the DOM. They repeat
+      words the page already says, as a signature does, so the document text
+      stays exactly the published copy and screen readers never hear a
+      decoration twice.
+
+   3. Every colour below is measured on the rendered page, not calculated on
       paper. The ratios in the comments are WCAG figures read back from the
       browser through a canvas, because oklch() and color-mix() resolve there,
       not in arithmetic done by hand. */
@@ -36,30 +43,29 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* The signature. Loads late by design: it decorates, so nothing waits for it. */
+@font-face {
+  font-family: "Mrs Saint Delafield";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/mrs-saint-delafield-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 @theme {
-  /* Literal white, not a warm near-white: the mood lives in the accent and
-     the typography, never in the surface. */
-  --color-bg: #ffffff;
-  --color-ink: oklch(0.21 0.012 240);
-  --color-muted: oklch(0.45 0.014 240);
-  --color-rule: color-mix(in oklab, oklch(0.21 0.012 240) 13%, #ffffff);
-  --color-rule-strong: color-mix(in oklab, oklch(0.21 0.012 240) 32%, #ffffff);
-
-  /* One accent. Petrol, the enamel of a measuring instrument, seeded at hue
-     200 and held within ten degrees of it. Dark enough to carry small text on
-     white on its own. */
-  --color-accent: oklch(0.47 0.1 210);
-
-  /* The plate: the one drenched surface, where the page ends by turning the
-     colour on. Text on it is white or a white mixed toward the plate, and both
-     are measured against it. */
-  --color-plate: oklch(0.4 0.09 212);
-  --color-plate-ink: #ffffff;
-  --color-plate-muted: color-mix(in oklab, #ffffff 82%, oklch(0.4 0.09 212));
-  --color-plate-rule: color-mix(in oklab, #ffffff 22%, oklch(0.4 0.09 212));
+  /* Paper and ink. The warm paper is the reference's own ground, not a
+     default: the deck this page is set after prints on this stock. The two
+     swap inside .reverse, and everything mixed from them follows. */
+  --color-field: oklch(0.936 0.007 80);
+  --color-ink: oklch(0.185 0.005 80);
+  --color-muted: color-mix(in oklab, var(--color-ink) 72%, var(--color-field));
+  --color-rule: color-mix(in oklab, var(--color-ink) 18%, var(--color-field));
+  --color-rule-strong: color-mix(in oklab, var(--color-ink) 38%, var(--color-field));
 
   --font-sans: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Chivo Mono", ui-monospace, "SFMono-Regular", monospace;
+  --font-script: "Mrs Saint Delafield", cursive;
 
   /* Built-in CSS easings are too weak to read as intentional. */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -83,21 +89,18 @@
   }
 
   body {
-    background: var(--color-bg);
+    background: var(--color-field);
     color: var(--color-ink);
-    /* Dark type on white does not need the extra air light-on-dark asked for:
-       1.55 here against the 1.65 the same face took on the void. */
     font: 400 1.0625rem/1.55 var(--font-sans);
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
   }
 
-  ::selection { background: var(--color-accent); color: var(--color-plate-ink); }
+  ::selection { background: var(--color-ink); color: var(--color-field); }
 
   :focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--color-ink);
     outline-offset: 3px;
-    border-radius: 2px;
     z-index: var(--z-focus);
   }
 
@@ -106,74 +109,125 @@
 }
 
 @layer components {
-  .shell {
+  /* A dark panel is the same panel with the two materials swapped. Everything
+     inside that was mixed from them recomputes, so no component needs a dark
+     variant of its own. */
+  .reverse {
+    --color-field: oklch(0.185 0.005 80);
+    --color-ink: oklch(0.936 0.007 80);
+    /* The mixes are re-tuned, not just re-fed: light type on a dark ground
+       reads dimmer than the same mix reads dark-on-light, so the reversed
+       panel lifts its secondary tones instead of mirroring them. */
+    --color-muted: color-mix(in oklab, var(--color-ink) 82%, var(--color-field));
+    --color-rule: color-mix(in oklab, var(--color-ink) 24%, var(--color-field));
+    --color-rule-strong: color-mix(in oklab, var(--color-ink) 48%, var(--color-field));
+    background: var(--color-field);
+    color: var(--color-ink);
+  }
+
+  .wrap {
     width: 100%;
-    max-width: 46rem;
+    max-width: 82rem;
     margin-inline: auto;
-    padding-inline: clamp(1.25rem, 6vw, 2.5rem);
+    padding-inline: clamp(1.25rem, 5vw, 4rem);
   }
 
-  /* The optical axis is the signature of this page, and on this face it is not
-     a refinement: at opsz 96 the letters narrow and pull, at opsz 12 they open
-     and round. The same family therefore reads as a display cut on the name and
-     as a text cut in a paragraph, which is the job a second family is usually
-     hired for. */
-  .display {
-    font-weight: 750;
-    font-size: clamp(3.25rem, 11.5vw, 6rem);
-    line-height: 0.92;
-    letter-spacing: -0.035em;
+  /* The label bar that opens the sheet, ruled above and below like a running
+     head. Mono, uppercase, tracked: the voice of the margins. */
+  .bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.25rem 2rem;
+    border-block: 1px solid var(--color-ink);
+    padding-block: 0.875rem;
   }
 
-  .heading {
-    font-weight: 640;
-    font-size: clamp(1.875rem, 3.4vw, 2.75rem);
-    line-height: 1.06;
-    letter-spacing: -0.022em;
-  }
-
-  .subhead {
-    font-weight: 600;
-    font-size: 1.3125rem;
-    line-height: 1.25;
-    letter-spacing: -0.012em;
-  }
-
-  /* Mono is the voice of measured values: spec labels, the counter, the
-     colophon. Never above a heading, because a tracked label over every h2 is
-     scaffolding, not voice. */
   .mono {
     font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    letter-spacing: 0.02em;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     font-variant-numeric: tabular-nums;
   }
 
-  /* The dimension callout under the name: the sheet annotating its own
-     artwork with the rule that draws it. Decorative, aria-hidden, and true. */
-  .dim {
-    margin-top: 1rem;
-    padding-top: 0.5rem;
-    border-top: 1px solid var(--color-rule-strong);
-    position: relative;
-    font-family: var(--font-mono);
-    font-size: 0.6875rem;
-    letter-spacing: 0.04em;
-    color: var(--color-muted);
+  /* Poster type. The optical axis does the compression: at opsz 96 and weight
+     800 this face pulls narrow and black, which is the whole voice of the
+     reference. Uppercase is applied here, never in the copy. */
+  .display-xl {
+    font-weight: 800;
+    font-size: clamp(3.25rem, 15vw, 13rem);
+    line-height: 0.85;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
   }
-  .dim::before, .dim::after {
-    content: "";
-    position: absolute;
-    top: -3px;
-    width: 1px;
-    height: 7px;
-    background: var(--color-rule-strong);
-  }
-  .dim::before { left: 0; }
-  .dim::after { right: 0; }
 
-  /* A row of the spec sheet: label on the left, value on the right. Not a
-     card. Cards are the lazy answer and these are data. */
+  .heading {
+    font-weight: 800;
+    font-size: clamp(2.375rem, 6.5vw, 4.75rem);
+    line-height: 0.9;
+    letter-spacing: -0.018em;
+    text-transform: uppercase;
+  }
+
+  .subhead {
+    font-weight: 700;
+    font-size: 1.375rem;
+    line-height: 1.2;
+    letter-spacing: -0.012em;
+  }
+
+  /* The signature script. Never uppercased, never load-bearing: overlays are
+     pseudo-element repetitions of words the page already says. The alt-text
+     slash hides them from assistive tech where supported. */
+  .script {
+    font-family: var(--font-script);
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .sig {
+    position: relative;
+  }
+  .sig::after {
+    content: var(--sig) / "";
+    position: absolute;
+    inset-inline-start: var(--sig-x, 50%);
+    inset-block-start: var(--sig-y, 60%);
+    transform: rotate(-6deg);
+    font-family: var(--font-script);
+    font-weight: 400;
+    font-size: var(--sig-size, clamp(2rem, 4.5vw, 3.75rem));
+    line-height: 1;
+    letter-spacing: 0;
+    text-transform: none;
+    white-space: nowrap;
+    color: var(--color-ink);
+    pointer-events: none;
+  }
+
+  /* The eight-spoke mark, drawn, because the character it resembles is an
+     emoji codepoint and this page publishes none. */
+  /* The two signatures. Their geometry lives here, not inline, because the
+     crossing point that works on a poster clips on a phone: below 40rem each
+     one starts nearer the margin and sits lower, sized to fit the column. */
+  .sig-role { --sig: "Full-stack web developer"; --sig-size: clamp(1.875rem, 7vw, 5.75rem); --sig-x: 4%; --sig-y: 96%; }
+  .sig-name { --sig: "Nicolò Rengifo"; --sig-size: clamp(2.25rem, 6vw, 4.75rem); --sig-x: 8%; --sig-y: 84%; }
+  @media (min-width: 40rem) {
+    .sig-role { --sig-x: 34%; --sig-y: 92%; }
+    .sig-name { --sig-x: 34%; --sig-y: 52%; }
+  }
+
+  .star {
+    inline-size: var(--star, 3rem);
+    block-size: var(--star, 3rem);
+    flex: none;
+    color: var(--color-ink);
+  }
+
+  /* A row of the sheet: label on the left, value on the right. Not a card. */
   .spec-row {
     display: grid;
     gap: 0.5rem 3rem;
@@ -181,11 +235,23 @@
     border-top: 1px solid var(--color-rule);
   }
   @media (min-width: 48rem) {
-    .spec-row { grid-template-columns: minmax(0, 10rem) minmax(0, 1fr); }
-    /* The work rows lead with a subhead, not a mono label, and a subhead
-       needs more column than a label: at 10rem "Visual editors and theme
-       systems" sets in three lines against a two-line value. */
-    #work .spec-row { grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); }
+    .spec-row { grid-template-columns: minmax(0, 11rem) minmax(0, 1fr); }
+    #work .spec-row { grid-template-columns: minmax(0, 16rem) minmax(0, 1fr); }
+  }
+
+  /* The work rows carry a printed index. Generated content, so the document
+     text stays the published copy; the alt-text slash keeps it out of the
+     accessibility tree where supported. */
+  #work ul { counter-reset: works; }
+  #work .spec-row { counter-increment: works; position: relative; }
+  .index-cell { display: flex; align-items: baseline; gap: 1rem; }
+  .index-cell::before {
+    content: counter(works, decimal-leading-zero) / "";
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: var(--color-muted);
+    padding-top: 0.4rem;
   }
 
   .chip {
@@ -194,48 +260,45 @@
     min-height: 2rem;
     padding-inline: 0.6875rem;
     border: 1px solid var(--color-rule-strong);
-    border-radius: 0.375rem;
     font-family: var(--font-mono);
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     color: var(--color-ink);
-    background: var(--color-bg);
   }
 
-  /* The table of contents is set like the sheet's own index: label, dot
-     leader, position. The leader is a baseline of dots, not a rule, so the eye
-     travels without the row reading as a box. */
-  .toc {
+  /* The index strip. Six labels in a ruled band; the current one is printed
+     in reverse, which is what "current" means on a two-material page. */
+  .strip {
     display: flex;
-    align-items: baseline;
-    gap: 0.875rem;
-    width: 100%;
-    padding-block: 0.75rem;
+    flex-wrap: wrap;
+    border-block: 1px solid var(--color-ink);
+  }
+  .strip li { display: flex; }
+  .strip a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
     min-height: 2.75rem;
-  }
-  .toc-leader {
-    flex: 1;
-    min-width: 2rem;
-    background-image: radial-gradient(circle, var(--color-rule-strong) 1px, transparent 1.5px);
-    background-size: 8px 2px;
-    background-position: bottom 0.2em left;
-    background-repeat: repeat-x;
-    height: 1em;
-    transition: background-image 180ms var(--ease-out);
-  }
-  .toc-num {
+    padding-inline: 1rem;
     font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    font-variant-numeric: tabular-nums;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    counter-increment: strip;
+    transition: background-color 180ms var(--ease-out), color 180ms var(--ease-out);
+  }
+  .strip { counter-reset: strip; }
+  .strip a::before {
+    content: counter(strip, decimal-leading-zero) / "";
+    font-size: 0.625rem;
     color: var(--color-muted);
     transition: color 180ms var(--ease-out);
   }
-  /* Constant weight, so activation changes colour and nothing reflows: a row
-     that gains weight when it becomes current pushes its own leader around. */
-  .toc-label { font-weight: 500; transition: color 180ms var(--ease-out); }
-  .toc[aria-current] .toc-label { color: var(--color-accent); }
-  .toc[aria-current] .toc-num { color: var(--color-accent); }
-  .toc[aria-current] .toc-leader {
-    background-image: radial-gradient(circle, var(--color-accent) 1px, transparent 1.5px);
+  .strip a[aria-current] { background: var(--color-ink); color: var(--color-field); }
+  .strip a[aria-current]::before { color: var(--color-field); }
+  @media (hover: hover) and (pointer: fine) {
+    .strip a:not([aria-current]):hover { background: color-mix(in oklab, var(--color-ink) 8%, var(--color-field)); }
   }
 
   /* Every pressable thing. 44px minimum, and it presses. */
@@ -259,52 +322,49 @@
     text-decoration-color: var(--color-rule-strong);
   }
   @media (hover: hover) and (pointer: fine) {
-    .link:hover { text-decoration-color: var(--color-accent); color: var(--color-accent); }
+    .link:hover { text-decoration-color: var(--color-ink); }
   }
 
   .solid {
     background: var(--color-ink);
-    color: var(--color-bg);
+    color: var(--color-field);
     padding-inline: 1.5rem;
-    border-radius: 0.375rem;
     font-family: var(--font-mono);
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     font-weight: 500;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid var(--color-ink);
   }
   @media (hover: hover) and (pointer: fine) {
-    .solid:hover { background: var(--color-accent); }
+    .solid:hover { background: transparent; color: var(--color-ink); }
   }
 
   /* The advance control is a key, and a key has travel: two millimetres of
-     shadow under the cap, spent on press. Faster than the generic press,
-     because a key that lags its own click feels broken. */
+     shadow under the cap, spent on press. */
   .key {
     min-height: 2.75rem;
     display: inline-flex;
     align-items: center;
     gap: 0.625rem;
     padding-inline: 1.125rem;
-    border: 1px solid var(--color-rule-strong);
-    border-radius: 0.5rem;
-    background: var(--color-bg);
+    border: 1px solid var(--color-ink);
+    background: var(--color-field);
     font-family: var(--font-mono);
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: var(--color-ink);
-    box-shadow: 0 2px 0 var(--color-rule-strong);
-    transition: translate 110ms var(--ease-out), box-shadow 110ms var(--ease-out),
-                border-color 180ms var(--ease-out);
+    box-shadow: 0 2px 0 var(--color-ink);
+    transition: translate 110ms var(--ease-out), box-shadow 110ms var(--ease-out);
     touch-action: manipulation;
   }
-  .key:active { translate: 0 2px; box-shadow: 0 0 0 var(--color-rule-strong); }
-  @media (hover: hover) and (pointer: fine) {
-    .key:hover { border-color: var(--color-ink); box-shadow: 0 2px 0 var(--color-ink); }
-    .key:hover:active { box-shadow: 0 0 0 var(--color-ink); }
-  }
+  .key:active { translate: 0 2px; box-shadow: 0 0 0 var(--color-ink); }
 
   /* The counter rail. An instrument, not navigation: aria-hidden, never
      focusable, and the readout snaps because a smoothed gauge reports a
-     position you are not in. */
+     position you are not in. Over a dark panel the page flips its materials
+     from the root, and the mixes follow. */
   .rail {
     position: fixed;
     right: 1.5rem;
@@ -323,31 +383,33 @@
     background: var(--color-rule-strong);
     transition: width 200ms var(--ease-out), background-color 200ms var(--ease-out);
   }
-  .rail-tick[data-on] { width: 1.75rem; background: var(--color-accent); }
+  .rail-tick[data-on] { width: 1.75rem; background: var(--color-ink); }
   .counter {
     font-family: var(--font-mono);
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
     font-variant-numeric: tabular-nums;
     color: var(--color-muted);
     margin-top: 0.25rem;
     transition: color 200ms var(--ease-out);
   }
-  /* The rail floats over whatever section is current. Over the plate its
-     white-page greys disappear into the petrol, so the readout restates
-     itself in the plate's own palette. */
-  [data-section="contact"] .rail-tick { background: var(--color-plate-rule); }
-  [data-section="contact"] .rail-tick[data-on] { background: var(--color-plate-ink); }
-  [data-section="contact"] .counter { color: var(--color-plate-muted); }
+  [data-section="work"] .rail, [data-section="experience"] .rail, [data-section="contact"] .rail {
+    --color-field: oklch(0.185 0.005 80);
+    --color-ink: oklch(0.936 0.007 80);
+    --color-muted: color-mix(in oklab, var(--color-ink) 82%, var(--color-field));
+    --color-rule-strong: color-mix(in oklab, var(--color-ink) 48%, var(--color-field));
+  }
 
   .copy {
     min-height: 2.75rem;
     display: inline-grid;
     place-items: center;
-    padding-inline: 1rem;
+    padding-inline: 1.125rem;
     border: 1px solid var(--color-rule-strong);
-    border-radius: 999px;
     font-family: var(--font-mono);
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: var(--color-muted);
     background: transparent;
     transition: color 200ms var(--ease-out), border-color 200ms var(--ease-out),
@@ -363,24 +425,7 @@
   .copy [data-done] { opacity: 0; filter: blur(3px); transition-duration: 140ms; }
   .copy[data-state="done"] [data-idle] { opacity: 0; filter: blur(3px); transition-duration: 140ms; }
   .copy[data-state="done"] [data-done] { opacity: 1; filter: blur(0); }
-  .copy[data-state="done"] { color: var(--color-accent); border-color: var(--color-accent); }
-
-  /* The closing plate. The one surface made of the accent, so every colour on
-     it is restated against the plate instead of inheriting a white-page value
-     that no longer contrasts. */
-  .plate {
-    background: var(--color-plate);
-    color: var(--color-plate-ink);
-  }
-  .plate ::selection { background: var(--color-plate-ink); color: var(--color-plate); }
-  .plate :focus-visible { outline-color: var(--color-plate-ink); }
-  .plate .mono, .plate .counter { color: var(--color-plate-muted); }
-  .plate .link { text-decoration-color: var(--color-plate-rule); }
-  @media (hover: hover) and (pointer: fine) {
-    .plate .link:hover { text-decoration-color: var(--color-plate-ink); color: var(--color-plate-ink); }
-  }
-  .plate .copy { color: var(--color-plate-muted); border-color: var(--color-plate-rule); }
-  .plate .copy[data-state="done"] { color: var(--color-plate-ink); border-color: var(--color-plate-ink); }
+  .copy[data-state="done"] { color: var(--color-ink); border-color: var(--color-ink); }
 }
 
 @layer utilities {
@@ -399,22 +444,18 @@
   }
   @keyframes rise { to { translate: none; } }
 
-  /* The name settles from the open text cut into the narrow display cut. It is
-     the one moment this page performs, and it is performed with the material
-     the whole typography is built on rather than with an effect bolted on top.
-
-     The end value is stepped rather than continuous: writing
-     font-variation-settings overrides the automatic optical axis, so the
-     animation has to land on a number, and the number steps at the same
-     breakpoints the clamp crosses to stay within a few units of the size
-     actually rendered. */
+  /* The name settles from the open text cut into the narrow poster cut. One
+     performed moment, made of the material the typography is built on. The
+     landing value steps at the widths the clamp crosses, because writing
+     font-variation-settings overrides the automatic optical axis and the
+     animation has to land on a number near the rendered size. */
   .js .name {
-    --opsz-end: 52;
+    --opsz-end: 56;
     font-variation-settings: "opsz" 12;
     animation: settle 620ms var(--ease-out) both;
   }
-  @media (min-width: 40rem) { .js .name { --opsz-end: 80; } }
-  @media (min-width: 52rem) { .js .name { --opsz-end: 96; } }
+  @media (min-width: 30rem) { .js .name { --opsz-end: 72; } }
+  @media (min-width: 40rem) { .js .name { --opsz-end: 96; } }
   @keyframes settle { to { font-variation-settings: "opsz" var(--opsz-end); } }
 
   /* Reduced motion removes movement and keeps opacity and colour, which is the
@@ -428,11 +469,12 @@
     }
   }
 
-  /* On paper the page is a document: no rail, no keys, no drench, and the
-     address is printed in full because a sheet cannot be clicked. */
+  /* On paper the page is a document: one material, no rail, no keys, and the
+     dark panels print as pages, not as posters. */
   @media print {
     .rail, .key, .copy { display: none !important; }
-    .plate { background: none; color: var(--color-ink); }
-    .plate .mono, .plate .counter { color: var(--color-muted); }
+    .reverse { background: none; color: var(--color-ink); }
+    .reverse * { --color-field: oklch(0.936 0.007 80); --color-ink: oklch(0.185 0.005 80); }
+    .sig::after { display: none; }
   }
 }

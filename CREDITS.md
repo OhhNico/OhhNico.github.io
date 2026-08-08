@@ -8,6 +8,7 @@ Everything this page loads is served from this host. Nothing here reaches a thir
 |---|---|---|
 | Bricolage Grotesque, variable, `opsz` 12-96 and `wght` 200-800 | SIL Open Font License 1.1 | `fonts/OFL-Bricolage.txt` |
 | Chivo Mono, variable | SIL Open Font License 1.1 | `fonts/OFL-ChivoMono.txt` |
+| Mrs Saint Delafield, the signature script | SIL Open Font License 1.1 | `fonts/OFL-MrsSaintDelafield.txt` |
 
 ## Libraries
 

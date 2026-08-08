@@ -20,11 +20,11 @@ Successo: qualcuno chiede "come è fatto questo?" invece di "quale template è?"
 
 ## Brand Personality
 
-**Tattile, levigato, asciutto.**
+**Stampato, firmato, asciutto.**
 
-Tattile: ogni cosa che si preme risponde come un oggetto, con corsa, ritorno e stato. Levigato: bianco pieno, inchiostro freddo, tolleranze strette; i dettagli invisibili si sommano, come vuole la scuola di design engineering di Emil Kowalski. Asciutto: nessuna frase promozionale, nessun aggettivo che non porti un fatto (regole di scrittura in `docs/superpowers/specs/`).
+Stampato: due materiali soli, carta calda e inchiostro quasi nero, e ogni pannello è uno dei due impresso sull'altro; il titolo lavora a corpo da manifesto. Firmato: un corsivo da firma attraversa il poster e sigla l'ultimo pannello, come su una copertina. Asciutto: nessuna frase promozionale, nessun aggettivo che non porti un fatto (regole di scrittura in `docs/superpowers/specs/`).
 
-**Riferimento nominato:** la scheda tecnica di uno strumento di misura, letta in piena luce, con la disciplina di interazione di Emil Kowalski (emilkowal.ski): easing custom, stati che sfumano attraverso un blur, feedback sotto i 200ms. La macchina delle capsule ha lasciato la stanza; quello che si pubblica è il suo foglio di specifica, e il foglio stesso è lavorato di macchina: la chiave di avanzamento ha due millimetri di corsa, l'indice ha i puntini di conduzione, il contatore scatta senza interpolare.
+**Riferimento nominato:** il deck editoriale da fashion portfolio fornito dal proprietario il 2026-08-08 (display nero compresso, pannelli alternati carta e nero, corsivo firma in sovrapposizione, asterischi a otto punte, barre a filetto con le etichette), eseguito con la disciplina di interazione di Emil Kowalski (emilkowal.ski): easing custom, stati che sfumano attraverso un blur, feedback sotto i 200ms, una chiave di avanzamento con due millimetri di corsa.
 
 ## Anti-references
 
@@ -33,7 +33,7 @@ Tattile: ogni cosa che si preme risponde come un oggetto, con corsa, ritorno e s
 - **Estetica terminale**: prompt verdi, finte finestre di shell, cursori lampeggianti. Costume, non voce.
 - **Profili README da template**: badge shields.io in fila, widget di statistiche, contatore di visite, animazione snake. Scartati uno per uno nella spec, con il motivo.
 - **Landing da sviluppatore post 2024**: sfumatura viola dietro contenuto scuro, card tutte uguali con icona e titolo, sezione di metriche grandi.
-- **Minimal bianco da template**: Inter su bianco con tre card e un footer. Il bianco qui regge solo perché il carattere, i leader, la chiave e la piastra finale lo firmano.
+- **Minimal bianco da template**: Inter su bianco con tre card e un footer. La scheda tecnica bianca del build precedente stava a un passo da questa famiglia, ed è il motivo per cui il proprietario l'ha sostituita in giornata con il registro poster.
 
 ## Design Principles
 
@@ -43,7 +43,7 @@ Tattile: ogni cosa che si preme risponde come un oggetto, con corsa, ritorno e s
 
 3. **Il gioco non è mai un pedaggio.** Il contenuto sta nel DOM dall'inizio e si legge tutto senza toccare niente. Chi ha fretta, chi usa uno screen reader e chi ha JavaScript spento ricevono la stessa pagina, non una versione mutilata.
 
-4. **Il colore è stato.** Un solo accento, il petrolio dello smalto degli strumenti, e appare dove qualcosa è corrente, focalizzato, riuscito o sotto il puntatore. A riposo la pagina è inchiostro su bianco. L'unica superficie fatta di accento è la piastra di chiusura, il Contact, dove la pagina finisce accendendo il colore.
+4. **Due materiali soli.** Carta e inchiostro, nessun colore d'accento: l'enfasi è corpo, peso, inversione e il corsivo firma. "Corrente" si dice stampando in negativo: la voce attiva dell'indice è carta su inchiostro, i pannelli pari sono inchiostro pieno, e il rail si ridichiara nella palette del pannello che attraversa.
 
 5. **Niente che possa marcire.** L'artefatto pubblicato non fa una sola richiesta fuori dal proprio host e non contiene librerie runtime: un foglio di stile e un kilobyte di script. I build step sono ammessi, le dipendenze runtime da terzi no: se fra due anni la toolchain non installa più, la pagina servita deve restare identica.
 
@@ -54,5 +54,6 @@ WCAG 2.1 AA, verificato **sul render reale**: contrasti letti dal browser sui co
 - `prefers-reduced-motion`: la pagina nasce a riposo. Le classi di partenza non vengono mai armate, il nome non si assesta, lo scroll è auto. Una pagina ferma, non un'animazione lenta.
 - Il rail di posizione è uno strumento di lettura, non navigazione: `aria-hidden`, mai focalizzabile, e ripete in forma peggiore quello che l'indice dice già in HTML.
 - La chiave di avanzamento sposta anche il focus sulla sezione raggiunta, così il Tab successivo parte da dove si sta guardando.
-- L'accento è ridondante: la riga corrente dell'indice è indicata anche dal contatore, e ogni sezione porta il proprio nome scritto.
+- L'inversione è ridondante: la riga corrente dell'indice è indicata anche dal contatore, e ogni sezione porta il proprio nome scritto.
+- Le firme in corsivo e i numeri stampati sono pseudo-elementi e contenuto generato con testo alternativo vuoto: ripetono parole che la pagina dice già, e uno screen reader le sente una volta sola.
 - Bersagli tattili minimo 44px. `:hover` sempre chiuso dietro `@media (hover: hover) and (pointer: fine)`.

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#efece5">
 <title>Nicolò Rengifo, full-stack web developer</title>
 <meta name="description" content="Full-stack web developer building multi-tenant web platforms with Laravel and Vue. Based in Legnano, Italy.">
 <link rel="icon" href="data:,">
@@ -21,11 +21,11 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentEl
 </head>
 <body>
 
-<a class="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-40 focus-visible:bg-ink focus-visible:px-4 focus-visible:py-3 focus-visible:font-mono focus-visible:text-[0.8125rem] focus-visible:text-bg" href="#work">Skip to content</a>
+<a class="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-40 focus-visible:bg-ink focus-visible:px-4 focus-visible:py-3 focus-visible:font-mono focus-visible:text-[0.8125rem] focus-visible:text-field" href="#work">Skip to content</a>
 
 <!-- The position readout. An instrument, not navigation: it duplicates what
-     the nav already says, in a worse form, so it is hidden from assistive tech
-     and can never take focus. -->
+     the index strip already says, in a worse form, so it is hidden from
+     assistive tech and can never take focus. -->
 <aside class="rail" aria-hidden="true">
   <span class="rail-tick" data-on></span>
   <span class="rail-tick"></span>
@@ -37,44 +37,45 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentEl
 </aside>
 
 <header id="top" data-section-index="0">
-  <div class="shell">
+  <div class="wrap">
 
-    <div class="rise flex flex-wrap items-baseline justify-between gap-x-8 gap-y-1 border-b border-rule pt-6 pb-5 sm:pt-8">
+    <div class="rise bar mt-6 sm:mt-8">
       <p class="mono">Full-stack web developer</p>
       <p class="mono text-muted">Legnano, Italy</p>
     </div>
 
-    <div class="py-[clamp(3.5rem,9vw,6.5rem)]">
-      <div class="rise inline-block" style="animation-delay:60ms">
-        <h1 class="name display"><span class="block">Nicolò</span><span class="block">Rengifo</span></h1>
-        <!-- The sheet annotating its own artwork: the size below is the rule
-             that draws the name above it. Decorative and true. -->
-        <p class="dim hidden md:block" aria-hidden="true">clamp(3.25rem, 11.5vw, 6rem) wght 750</p>
+    <div class="relative pt-[clamp(3rem,7vw,5.5rem)] pb-[clamp(2.5rem,5vw,4rem)]">
+      <svg class="star absolute right-0 top-[clamp(0.5rem,2vw,1.5rem)]" style="--star:clamp(2.75rem,6vw,5.5rem)" viewBox="0 0 96 96" aria-hidden="true" fill="currentColor"><path d="M43 0h10v96H43z"/><path d="M0 43h96v10H0z"/><path d="m13.4 20.5 7.1-7.1 62.1 62.1-7.1 7.1z"/><path d="m82.6 13.4 7.1 7.1-62.1 62.1-7.1-7.1z"/></svg>
+
+      <!-- The signature crossing the poster repeats the role the bar above
+           already states, the way a deck signs its own cover. It lives in a
+           pseudo-element, so the document says it once. -->
+      <div class="rise sig sig-role">
+        <h1 class="name display-xl"><span class="block">Nicolò</span><span class="block">Rengifo</span></h1>
       </div>
 
-      <p class="rise mt-[clamp(2rem,4vw,3rem)] max-w-[64ch] text-[clamp(1.125rem,1.7vw,1.375rem)] leading-[1.5] tracking-[-0.012em]" style="animation-delay:140ms">I build multi-tenant web platforms: backend, visual editor, theme system, deploy. Working on the web since 2020, mostly PHP and Vue. Lately a lot of my time goes to AI tooling and automation.</p>
+      <div class="mt-[clamp(2.5rem,5vw,4rem)] flex flex-wrap items-end justify-between gap-x-12 gap-y-8">
+        <p class="rise max-w-[46ch] text-[clamp(1.0625rem,1.5vw,1.25rem)] leading-[1.5] tracking-[-0.01em]" style="animation-delay:140ms">I build multi-tenant web platforms: backend, visual editor, theme system, deploy. Working on the web since 2020, mostly PHP and Vue. Lately a lot of my time goes to AI tooling and automation.</p>
 
-      <div class="rise mt-[clamp(2.25rem,4vw,3rem)] flex flex-wrap items-center gap-x-6 gap-y-2" style="animation-delay:200ms">
-        <a class="press solid" href="mailto:nicogifo2000@gmail.com">Email</a>
-        <a class="press link mono" href="https://www.linkedin.com/in/nicol%C3%B2rengifo/" rel="me">LinkedIn</a>
-        <a class="press link mono" href="https://github.com/OhhNico" rel="me">GitHub</a>
+        <div class="rise flex flex-wrap items-center gap-x-6 gap-y-2" style="animation-delay:200ms">
+          <a class="press solid" href="mailto:nicogifo2000@gmail.com">Email</a>
+          <a class="press link mono" href="https://www.linkedin.com/in/nicol%C3%B2rengifo/" rel="me">LinkedIn</a>
+          <a class="press link mono" href="https://github.com/OhhNico" rel="me">GitHub</a>
+        </div>
       </div>
 
-      <!-- The sheet's own index: label, dot leader, position. The numbers are
-           the same ones the rail counts, and the current row is the one place
-           outside the plate where the accent stands still. -->
-      <nav class="rise mt-[clamp(2.75rem,6vw,4.5rem)]" aria-label="Sections" style="animation-delay:260ms">
-        <ol class="border-t border-rule">
-          <li><a class="press toc border-b border-rule" href="#top"><span class="toc-label">Intro</span><span class="toc-leader" aria-hidden="true"></span><span class="toc-num" aria-hidden="true">1</span></a></li>
-          <li><a class="press toc border-b border-rule" href="#work"><span class="toc-label">What I work on</span><span class="toc-leader" aria-hidden="true"></span><span class="toc-num" aria-hidden="true">2</span></a></li>
-          <li><a class="press toc border-b border-rule" href="#stack"><span class="toc-label">Stack</span><span class="toc-leader" aria-hidden="true"></span><span class="toc-num" aria-hidden="true">3</span></a></li>
-          <li><a class="press toc border-b border-rule" href="#experience"><span class="toc-label">Experience</span><span class="toc-leader" aria-hidden="true"></span><span class="toc-num" aria-hidden="true">4</span></a></li>
-          <li><a class="press toc border-b border-rule" href="#currently"><span class="toc-label">Currently</span><span class="toc-leader" aria-hidden="true"></span><span class="toc-num" aria-hidden="true">5</span></a></li>
-          <li><a class="press toc border-b border-rule" href="#contact"><span class="toc-label">Contact</span><span class="toc-leader" aria-hidden="true"></span><span class="toc-num" aria-hidden="true">6</span></a></li>
+      <!-- The sheet's own index: six labels in a ruled band, the current one
+           printed in reverse. The printed numbers are generated content, so
+           the document text stays the published copy. -->
+      <nav class="rise mt-[clamp(2.75rem,5vw,4rem)]" aria-label="Sections" style="animation-delay:260ms">
+        <ol class="strip">
+          <li><a class="press" href="#top">Intro</a></li>
+          <li><a class="press" href="#work">What I work on</a></li>
+          <li><a class="press" href="#stack">Stack</a></li>
+          <li><a class="press" href="#experience">Experience</a></li>
+          <li><a class="press" href="#currently">Currently</a></li>
+          <li><a class="press" href="#contact">Contact</a></li>
         </ol>
-
-        <!-- The real control. The rail is its readout, and this key is the only
-             thing on the page with travel: two millimetres, spent on press. -->
         <button class="key mt-6" type="button" data-advance>Next section</button>
       </nav>
     </div>
@@ -83,24 +84,27 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentEl
 
 <main>
 
-  <section id="work" data-section-index="1">
-    <div class="shell py-[clamp(3rem,7vw,5.5rem)]">
-      <h2 class="heading" tabindex="-1">What I work on</h2>
-      <ul role="list" class="mt-[clamp(2rem,4vw,3.25rem)] border-b border-rule">
+  <section id="work" class="reverse" data-section-index="1">
+    <div class="wrap py-[clamp(3.5rem,8vw,7rem)]">
+      <div class="flex items-start justify-between gap-6">
+        <h2 class="heading" tabindex="-1">What I work on</h2>
+        <svg class="star mt-2" style="--star:clamp(1.75rem,3.5vw,3rem)" viewBox="0 0 96 96" aria-hidden="true" fill="currentColor"><path d="M43 0h10v96H43z"/><path d="M0 43h96v10H0z"/><path d="m13.4 20.5 7.1-7.1 62.1 62.1-7.1 7.1z"/><path d="m82.6 13.4 7.1 7.1-62.1 62.1-7.1-7.1z"/></svg>
+      </div>
+      <ul role="list" class="mt-[clamp(2rem,4vw,3.5rem)] border-b border-rule">
         <li class="spec-row">
-          <h3 class="subhead">Multi-tenant SaaS</h3>
+          <div class="index-cell"><h3 class="subhead">Multi-tenant SaaS</h3></div>
           <p class="max-w-[54ch] text-muted">Tenant isolation, subscription billing, roles and permissions, media pipelines.</p>
         </li>
         <li class="spec-row">
-          <h3 class="subhead">Visual editors and theme systems</h3>
+          <div class="index-cell"><h3 class="subhead">Visual editors and theme systems</h3></div>
           <p class="max-w-[54ch] text-muted">Drag and drop page building on a GrapesJS fork, with a themeable output layer.</p>
         </li>
         <li class="spec-row">
-          <h3 class="subhead">Campaign platforms</h3>
+          <div class="index-cell"><h3 class="subhead">Campaign platforms</h3></div>
           <p class="max-w-[54ch] text-muted">Prize campaigns that run for a few weeks. Entry validation, draws, compliance.</p>
         </li>
         <li class="spec-row">
-          <h3 class="subhead">AI tooling</h3>
+          <div class="index-cell"><h3 class="subhead">AI tooling</h3></div>
           <p class="max-w-[54ch] text-muted">MCP servers, PHP agent frameworks, and automation around design and asset work.</p>
         </li>
       </ul>
@@ -108,9 +112,12 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentEl
   </section>
 
   <section id="stack" data-section-index="2">
-    <div class="shell py-[clamp(3rem,7vw,5.5rem)]">
-      <h2 class="heading" tabindex="-1">Stack</h2>
-      <dl class="mt-[clamp(2rem,4vw,3.25rem)] border-b border-rule">
+    <div class="wrap py-[clamp(3.5rem,8vw,7rem)]">
+      <div class="flex items-start justify-between gap-6">
+        <h2 class="heading" tabindex="-1">Stack</h2>
+        <svg class="star mt-2" style="--star:clamp(1.75rem,3.5vw,3rem)" viewBox="0 0 96 96" aria-hidden="true" fill="currentColor"><path d="M43 0h10v96H43z"/><path d="M0 43h96v10H0z"/><path d="m13.4 20.5 7.1-7.1 62.1 62.1-7.1 7.1z"/><path d="m82.6 13.4 7.1 7.1-62.1 62.1-7.1-7.1z"/></svg>
+      </div>
+      <dl class="mt-[clamp(2rem,4vw,3.5rem)] border-b border-rule">
         <div class="spec-row">
           <dt class="mono pt-1.5 text-muted">Backend</dt>
           <dd class="flex flex-wrap gap-2"><span class="chip">PHP</span><span class="chip">Laravel</span><span class="chip">Inertia</span><span class="chip">MySQL</span><span class="chip">Python</span></dd>
@@ -131,10 +138,13 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentEl
     </div>
   </section>
 
-  <section id="experience" data-section-index="3">
-    <div class="shell py-[clamp(3rem,7vw,5.5rem)]">
-      <h2 class="heading" tabindex="-1">Experience</h2>
-      <ol role="list" class="mt-[clamp(2rem,4vw,3.25rem)] border-b border-rule">
+  <section id="experience" class="reverse" data-section-index="3">
+    <div class="wrap py-[clamp(3.5rem,8vw,7rem)]">
+      <div class="flex items-start justify-between gap-6">
+        <h2 class="heading" tabindex="-1">Experience</h2>
+        <svg class="star mt-2" style="--star:clamp(1.75rem,3.5vw,3rem)" viewBox="0 0 96 96" aria-hidden="true" fill="currentColor"><path d="M43 0h10v96H43z"/><path d="M0 43h96v10H0z"/><path d="m13.4 20.5 7.1-7.1 62.1 62.1-7.1 7.1z"/><path d="m82.6 13.4 7.1 7.1-62.1 62.1-7.1-7.1z"/></svg>
+      </div>
+      <ol role="list" class="mt-[clamp(2rem,4vw,3.5rem)] border-b border-rule">
         <li class="spec-row">
           <p class="mono pt-2 text-muted">2024 to now</p>
           <div>
@@ -154,9 +164,12 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentEl
   </section>
 
   <section id="currently" data-section-index="4">
-    <div class="shell py-[clamp(3rem,7vw,5.5rem)]">
-      <h2 class="heading" tabindex="-1">Currently</h2>
-      <dl class="mt-[clamp(2rem,4vw,3.25rem)] border-b border-rule">
+    <div class="wrap py-[clamp(3.5rem,8vw,7rem)]">
+      <div class="flex items-start justify-between gap-6">
+        <h2 class="heading" tabindex="-1">Currently</h2>
+        <svg class="star mt-2" style="--star:clamp(1.75rem,3.5vw,3rem)" viewBox="0 0 96 96" aria-hidden="true" fill="currentColor"><path d="M43 0h10v96H43z"/><path d="M0 43h96v10H0z"/><path d="m13.4 20.5 7.1-7.1 62.1 62.1-7.1 7.1z"/><path d="m82.6 13.4 7.1 7.1-62.1 62.1-7.1-7.1z"/></svg>
+      </div>
+      <dl class="mt-[clamp(2rem,4vw,3.5rem)] border-b border-rule">
         <div class="spec-row">
           <dt class="mono pt-1.5 text-muted">learning</dt>
           <dd class="text-[1.125rem]">MCP servers, agent orchestration</dd>
@@ -173,12 +186,19 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentEl
     </div>
   </section>
 
-  <section id="contact" class="plate" data-section-index="5">
-    <div class="shell pt-[clamp(3.5rem,8vw,6.5rem)] pb-[clamp(3rem,6vw,5rem)]">
-      <h2 class="heading" tabindex="-1">Contact</h2>
+  <section id="contact" class="reverse" data-section-index="5">
+    <div class="wrap pt-[clamp(3.5rem,8vw,7rem)] pb-[clamp(3rem,6vw,5rem)]">
+      <!-- The signature signs the last panel with the name the page opened
+           with. A pseudo-element repetition, so the document says it once. -->
+      <div class="sig sig-name">
+        <div class="flex items-start justify-between gap-6">
+          <h2 class="heading" tabindex="-1">Contact</h2>
+          <svg class="star mt-2" style="--star:clamp(1.75rem,3.5vw,3rem)" viewBox="0 0 96 96" aria-hidden="true" fill="currentColor"><path d="M43 0h10v96H43z"/><path d="M0 43h96v10H0z"/><path d="m13.4 20.5 7.1-7.1 62.1 62.1-7.1 7.1z"/><path d="m82.6 13.4 7.1 7.1-62.1 62.1-7.1-7.1z"/></svg>
+        </div>
+      </div>
 
-      <div class="mt-[clamp(2rem,4vw,3.25rem)] flex flex-wrap items-center gap-x-6 gap-y-4 border-t border-plate-rule pt-8">
-        <a class="press link max-w-full [overflow-wrap:anywhere] font-sans text-[clamp(1.25rem,4.5vw,2.25rem)] font-bold leading-[1.15] tracking-[-0.02em] [text-decoration-thickness:0.055em] [text-underline-offset:0.2em]" href="mailto:nicogifo2000@gmail.com">nicogifo2000@gmail.com</a>
+      <div class="mt-[clamp(2.5rem,5vw,4rem)] flex flex-wrap items-center gap-x-6 gap-y-4 border-t border-rule pt-8">
+        <a class="press link max-w-full [overflow-wrap:anywhere] font-sans text-[clamp(1.375rem,4.5vw,2.75rem)] font-bold leading-[1.15] tracking-[-0.02em] [text-decoration-thickness:0.05em] [text-underline-offset:0.2em]" href="mailto:nicogifo2000@gmail.com">nicogifo2000@gmail.com</a>
         <button class="copy" type="button" data-copy="nicogifo2000@gmail.com" aria-label="Copy email address">
           <span data-idle>Copy</span>
           <span data-done aria-hidden="true">Copied</span>
@@ -191,9 +211,9 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentEl
         <a class="press link mono" href="https://github.com/OhhNico" rel="me">GitHub</a>
       </div>
 
-      <div class="mt-[clamp(3.5rem,7vw,6rem)] flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2 border-t border-plate-rule pt-7">
-        <p class="mono">Legnano, Italy</p>
-        <p class="mono">Bricolage Grotesque, Chivo Mono, one stylesheet and a kilobyte of script, all served from here.</p>
+      <div class="mt-[clamp(3.5rem,7vw,6rem)] flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2 border-t border-rule pt-7">
+        <p class="mono text-muted">Legnano, Italy</p>
+        <p class="mono text-muted">Bricolage Grotesque, Chivo Mono, Mrs Saint Delafield, one stylesheet and a kilobyte of script, all served from here.</p>
       </div>
     </div>
   </section>
