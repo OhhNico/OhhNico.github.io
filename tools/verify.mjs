@@ -36,10 +36,7 @@ const server = createServer(async (req, res) => {
 await new Promise((r) => server.listen(PORT, r));
 const URL_ = `http://localhost:${PORT}/index.html`;
 
-const browser = await chromium.launch({
-  channel: "chrome",
-  args: ["--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"],
-});
+const browser = await chromium.launch({ channel: "chrome" });
 
 /* ---- 1. First frame -------------------------------------------------------
    Captured at 'commit', before load, before fonts, before the module. The
@@ -77,42 +74,26 @@ let cls = null;
   await p.close();
 }
 
-/* ---- 3. Main thread cost per frame --------------------------------------
-   The first version of this check measured frames per second under six times
-   CPU throttling and failed at 2.1. The number was real and meant nothing about
-   this page: the verification browser rasterises in software, so it draws the
-   transmission pass, which is the scene rendered twice, entirely on the CPU that
-   is also being throttled. It was measuring the bench.
-
-   What this page controls is the JavaScript it runs per frame, so that is what
-   is gated. The rasteriser's frame rate is still printed, as context, with the
-   caveat attached. */
+/* ---- 3. No frame loop on a still page ------------------------------------
+   The script's claim is on its first line: nothing runs per frame. This check
+   holds it to that. requestAnimationFrame is wrapped before any page script
+   runs, and after load the page gets two seconds to ask for frames. The
+   defect this guards was shipped by an earlier build of this site: a rAF loop
+   running 64 times a second on a completely still page, forever. */
 {
   const p = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-  await p.goto(URL_ + "?debug", { waitUntil: "load" });
-  await p.waitForTimeout(1800);
-  const m = await p.evaluate(async () => {
-    document.querySelector("#stack").scrollIntoView();
-    await new Promise((r) => setTimeout(r, 120));
-    const s = window.__m;
-    let t = 0;
-    for (let i = 0; i < 120; i++) {
-      const a = performance.now();
-      s.dispenser.update(1 / 60);
-      if (!s.solver.asleep) s.solver.step(1 / 60);
-      t += performance.now() - a;
-    }
-    let n = 0;
-    const t0 = performance.now();
-    await new Promise((done) => {
-      const tick = () => { n++; performance.now() - t0 < 1500 ? requestAnimationFrame(tick) : done(); };
-      requestAnimationFrame(tick);
-    });
-    return { ms: t / 120, fps: n / ((performance.now() - t0) / 1000) };
+  await p.addInitScript(() => {
+    window.__raf = 0;
+    const real = window.requestAnimationFrame.bind(window);
+    window.requestAnimationFrame = (cb) => { window.__raf++; return real(cb); };
   });
-  record(3, "Main thread cost per frame during a dispense", m.ms < 2,
-    `${m.ms.toFixed(3)} ms of physics and placement per frame, budget 16.7. ` +
-    `Rasteriser managed ${m.fps.toFixed(1)} fps, which is SwiftShader drawing a transmission pass in software, not a GPU figure`);
+  await p.goto(URL_, { waitUntil: "load" });
+  await p.waitForTimeout(1000);
+  const before = await p.evaluate(() => window.__raf);
+  await p.waitForTimeout(2000);
+  const after = await p.evaluate(() => window.__raf);
+  record(3, "No frame loop on a still page", after - before === 0,
+    `${after - before} requestAnimationFrame calls in 2s of stillness (${after} since load, including the browser's own)`);
   await p.close();
 }
 
@@ -182,27 +163,22 @@ let cls = null;
 }
 
 /* ---- 6. Reduced motion ---------------------------------------------------
-   Not a slower animation. The machine is drawn once and the loop never starts,
-   so the check is that the page stops asking for frames. */
+   Not a slower animation: the page at rest from the first frame. The head
+   script never arms the start states, so nothing rises, nothing settles, and
+   scroll obeys the stylesheet's auto. */
 {
   const ctx = await browser.newContext({ reducedMotion: "reduce", viewport: { width: 1440, height: 900 } });
   const p = await ctx.newPage();
-  await p.goto(URL_ + "?debug", { waitUntil: "load" });
-  await p.waitForTimeout(2000);
-  const frames = await p.evaluate(async () => {
-    let n = 0;
-    const t0 = performance.now();
-    await new Promise((done) => {
-      const tick = () => { n++; performance.now() - t0 < 700 ? requestAnimationFrame(tick) : done(); };
-      requestAnimationFrame(tick);
-    });
-    /* Our own probe requests frames, so what is being measured is whether the
-       page is doing work in them, not whether rAF fires at all. */
-    return { probe: n, hasJsClass: document.documentElement.classList.contains("js"), webgl: document.documentElement.classList.contains("webgl") };
-  });
-  record(6, "Reduced motion draws a still life",
-    !frames.hasJsClass && frames.webgl,
-    `js class absent (start states never armed), webgl class present (machine drawn once)`);
+  await p.goto(URL_, { waitUntil: "load" });
+  await p.waitForTimeout(900);
+  const state = await p.evaluate(() => ({
+    hasJsClass: document.documentElement.classList.contains("js"),
+    running: document.getAnimations().filter((a) => a.playState === "running").length,
+    scroll: getComputedStyle(document.documentElement).scrollBehavior,
+  }));
+  record(6, "Reduced motion lands on a page at rest",
+    !state.hasJsClass && state.running === 0 && state.scroll === "auto",
+    `js class absent (start states never armed), ${state.running} running animations, scroll-behavior ${state.scroll}`);
   await ctx.close();
 }
 
@@ -286,17 +262,32 @@ let bytes = [];
     bad.filter((b) => !b.startsWith("1440")).join(", ") || "0px overflow at 375x812 and 812x375");
 }
 
-/* ---- 12. The solver sleeps ----------------------------------------------
-   This check exists because the defect it catches has already been shipped by
-   this project once: the previous build registered a rAF loop that ran 64 times
-   a second on a completely still page, forever. */
+/* ---- 12. Still after interaction -----------------------------------------
+   Check 3 measures a page nobody touched. This one walks the page the way a
+   reader does, advancing through every section and copying the address, and
+   then requires the same silence: interaction may animate, but when it ends,
+   the page stops asking for frames. */
 {
   const p = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-  await p.goto(URL_ + "?debug", { waitUntil: "load" });
-  await p.waitForTimeout(9000);
-  const state = await p.evaluate(() => ({ asleep: window.__m?.solver?.asleep ?? null, stillFor: window.__m?.solver?.stillFor ?? null }));
-  record(12, "Physics sleeps on a still page", state.asleep === true,
-    `solver.asleep = ${state.asleep} after 9s without interaction, still for ${state.stillFor?.toFixed?.(2)}s`);
+  await p.addInitScript(() => {
+    window.__raf = 0;
+    const real = window.requestAnimationFrame.bind(window);
+    window.requestAnimationFrame = (cb) => { window.__raf++; return real(cb); };
+  });
+  await p.goto(URL_, { waitUntil: "load" });
+  await p.waitForTimeout(1200);
+  for (let i = 0; i < 5; i++) {
+    await p.click("[data-advance]");
+    await p.waitForTimeout(500);
+  }
+  await p.click("[data-copy]").catch(() => {});
+  await p.waitForTimeout(2600);
+  const before = await p.evaluate(() => window.__raf);
+  await p.waitForTimeout(2000);
+  const after = await p.evaluate(() => window.__raf);
+  const counter = await p.locator("[data-counter]").textContent();
+  record(12, "Still after walking the whole page", after - before === 0 && counter === "6",
+    `counter reads ${counter} / 6 after five advances, ${after - before} requestAnimationFrame calls in the 2s after interaction ended`);
   await p.close();
 }
 

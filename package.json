@@ -1,24 +1,20 @@
 {
   "name": "ohhnico-github-io",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": true,
   "type": "module",
-  "description": "Personal site for Nicolo Rengifo. The page is a capsule prize machine. Tailwind compiles src/input.css to style.css and esbuild bundles src/main.js to app.js; both outputs are committed and are the only stylesheet and the only script the page loads, so the published page makes no third-party requests.",
+  "description": "Personal site for Nicolo Rengifo. The page is the spec sheet of its own making: white, one petrol accent, controls with travel. Tailwind compiles src/input.css to style.css and esbuild bundles src/main.js to app.js; both outputs are committed and are the only stylesheet and the only script the page loads, so the published page makes no third-party requests.",
   "scripts": {
     "build": "npm run build:css && npm run build:js",
     "build:css": "tailwindcss --input src/input.css --output style.css --minify",
     "build:js": "esbuild src/main.js --bundle --format=esm --target=es2022 --minify --outfile=app.js",
     "dev": "npm run build:css -- --watch & npm run build:js -- --watch --sourcemap",
-    "parts": "node tools/build-parts.mjs",
-    "refs": "node tools/fetch-refs.mjs",
     "serve": "python3 -m http.server 4173",
     "verify": "node tools/verify.mjs"
   },
   "devDependencies": {
     "@tailwindcss/cli": "4.3.3",
     "esbuild": "0.25.12",
-    "gsap": "3.15.0",
-    "tailwindcss": "4.3.3",
-    "three": "0.185.1"
+    "tailwindcss": "4.3.3"
   }
 }

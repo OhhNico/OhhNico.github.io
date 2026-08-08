@@ -2,19 +2,19 @@
    committed: the published page loads one stylesheet from this host and makes
    no third-party request.
 
-   The page is a capsule prize machine standing in an unlit room. Two rules do
-   most of the work here:
+   The machine has left the room. What ships now is its spec sheet, read in
+   daylight: a white page, cold ink, and one petrol accent that behaves like
+   feedback, not like decoration. Two rules do most of the work here:
 
-   1. Outside the glass, exactly one accent exists at a time. `--accent` is the
-      current section's capsule, written on the root element by main.js. The six
-      appear together only inside the globe, where six coloured plastics have a
-      physical reason to be next to each other, and in the hero nav, where they
-      are a legend.
+   1. Colour means state. The accent appears where something is current,
+      focused, done or under the pointer, and on the closing plate, which is
+      the one surface allowed to be made of it. Everything at rest is ink on
+      white.
 
-   2. Every colour below was measured on the rendered page, not calculated on
-      paper. The contrast figures in the comments are WCAG ratios against
-      --void. A third text level at color-mix(ink 52%) measured 4.38:1 and was
-      deleted rather than left available to reach for by mistake. */
+   2. Every colour below is measured on the rendered page, not calculated on
+      paper. The ratios in the comments are WCAG figures read back from the
+      browser through a canvas, because oklch() and color-mix() resolve there,
+      not in arithmetic done by hand. */
 
 @import "tailwindcss";
 
@@ -37,26 +37,26 @@
 }
 
 @theme {
-  --color-void: #08080b;         /* the unlit room */
-  --color-raised: #101117;       /* surfaces above it */
-  --color-ink: #f2f1f6;          /* 17.80:1 */
-  --color-muted: color-mix(in oklab, #f2f1f6 68%, #08080b);        /*  7.40:1 */
-  --color-rule: color-mix(in oklab, #f2f1f6 14%, #08080b);
-  --color-rule-strong: color-mix(in oklab, #f2f1f6 28%, #08080b);
+  /* Literal white, not a warm near-white: the mood lives in the accent and
+     the typography, never in the surface. */
+  --color-bg: #ffffff;
+  --color-ink: oklch(0.21 0.012 240);
+  --color-muted: oklch(0.45 0.014 240);
+  --color-rule: color-mix(in oklab, oklch(0.21 0.012 240) 13%, #ffffff);
+  --color-rule-strong: color-mix(in oklab, oklch(0.21 0.012 240) 32%, #ffffff);
 
-  /* The six capsules. Solved in OKLCH at driven lightness, then converted, so
-     they separate in greyscale and under dichromacy and not only by hue.
-     Minimum lightness delta between any two is 0.030, between adjacent
-     sections 0.070. Worst deuteranopia pair 0.204. Worst protanopia pair is
-     work/stack at 0.111, which is a recorded regression: those two are held
-     apart by 0.10 of lightness instead, which is the channel dichromacy does
-     not touch. */
-  --color-c1: #ec5f27;   /* intro       okL 0.66   5.94:1 */
-  --color-c2: #fbd278;   /* work        okL 0.88  13.90:1 */
-  --color-c3: #3cd785;   /* stack       okL 0.78  10.72:1 */
-  --color-c4: #33b3cd;   /* experience  okL 0.71   8.07:1 */
-  --color-c5: #c8befa;   /* currently   okL 0.83  11.62:1 */
-  --color-c6: #f879b6;   /* contact     okL 0.74   8.00:1 */
+  /* One accent. Petrol, the enamel of a measuring instrument, seeded at hue
+     200 and held within ten degrees of it. Dark enough to carry small text on
+     white on its own. */
+  --color-accent: oklch(0.47 0.1 210);
+
+  /* The plate: the one drenched surface, where the page ends by turning the
+     colour on. Text on it is white or a white mixed toward the plate, and both
+     are measured against it. */
+  --color-plate: oklch(0.4 0.09 212);
+  --color-plate-ink: #ffffff;
+  --color-plate-muted: color-mix(in oklab, #ffffff 82%, oklch(0.4 0.09 212));
+  --color-plate-rule: color-mix(in oklab, #ffffff 22%, oklch(0.4 0.09 212));
 
   --font-sans: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Chivo Mono", ui-monospace, "SFMono-Regular", monospace;
@@ -66,7 +66,6 @@
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 
   /* Semantic, so nobody ever writes 9999. */
-  --z-scene: 0;
   --z-content: 10;
   --z-sticky: 20;
   --z-overlay: 30;
@@ -75,8 +74,7 @@
 
 @layer base {
   :root {
-    color-scheme: dark;
-    --accent: var(--color-c1);
+    color-scheme: light;
     scroll-behavior: smooth;
   }
 
@@ -85,20 +83,19 @@
   }
 
   body {
-    background: var(--color-void);
+    background: var(--color-bg);
     color: var(--color-ink);
-    /* Light type on a dark ground reads lighter than it is and wants more air:
-       1.65 rather than the 1.55 the same face would take on white. */
-    font: 400 1.0625rem/1.65 var(--font-sans);
-    -webkit-font-smoothing: antialiased;
+    /* Dark type on white does not need the extra air light-on-dark asked for:
+       1.55 here against the 1.65 the same face took on the void. */
+    font: 400 1.0625rem/1.55 var(--font-sans);
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
   }
 
-  ::selection { background: var(--accent); color: var(--color-void); }
+  ::selection { background: var(--color-accent); color: var(--color-plate-ink); }
 
   :focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--color-accent);
     outline-offset: 3px;
     border-radius: 2px;
     z-index: var(--z-focus);
@@ -111,29 +108,28 @@
 @layer components {
   .shell {
     width: 100%;
-    max-width: 78rem;
+    max-width: 46rem;
     margin-inline: auto;
-    padding-inline: clamp(1.25rem, 5vw, 4rem);
+    padding-inline: clamp(1.25rem, 6vw, 2.5rem);
   }
 
   /* The optical axis is the signature of this page, and on this face it is not
      a refinement: at opsz 96 the letters narrow and pull, at opsz 12 they open
      and round. The same family therefore reads as a display cut on the name and
      as a text cut in a paragraph, which is the job a second family is usually
-     hired for. font-optical-sizing is auto by default, so the browser feeds the
-     used size to the axis without help. */
+     hired for. */
   .display {
-    font-weight: 700;
-    font-size: clamp(2.75rem, 7vw, 5.5rem);
-    line-height: 0.95;
-    letter-spacing: -0.03em;
+    font-weight: 750;
+    font-size: clamp(3.25rem, 11.5vw, 6rem);
+    line-height: 0.92;
+    letter-spacing: -0.035em;
   }
 
   .heading {
-    font-weight: 600;
-    font-size: clamp(1.75rem, 3.4vw, 2.6rem);
-    line-height: 1.1;
-    letter-spacing: -0.02em;
+    font-weight: 640;
+    font-size: clamp(1.875rem, 3.4vw, 2.75rem);
+    line-height: 1.06;
+    letter-spacing: -0.022em;
   }
 
   .subhead {
@@ -143,9 +139,9 @@
     letter-spacing: -0.012em;
   }
 
-  /* Mono lives in three places only: spec values, the counter, and hex. Never
-     above a heading, because a tracked uppercase label over every h2 is the
-     scaffolding this rewrite exists to remove. */
+  /* Mono is the voice of measured values: spec labels, the counter, the
+     colophon. Never above a heading, because a tracked label over every h2 is
+     scaffolding, not voice. */
   .mono {
     font-family: var(--font-mono);
     font-size: 0.8125rem;
@@ -153,8 +149,31 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* A row of the machine's spec sheet: label on the left, value on the right.
-     Not a card. Cards are the lazy answer and these are data. */
+  /* The dimension callout under the name: the sheet annotating its own
+     artwork with the rule that draws it. Decorative, aria-hidden, and true. */
+  .dim {
+    margin-top: 1rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--color-rule-strong);
+    position: relative;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    color: var(--color-muted);
+  }
+  .dim::before, .dim::after {
+    content: "";
+    position: absolute;
+    top: -3px;
+    width: 1px;
+    height: 7px;
+    background: var(--color-rule-strong);
+  }
+  .dim::before { left: 0; }
+  .dim::after { right: 0; }
+
+  /* A row of the spec sheet: label on the left, value on the right. Not a
+     card. Cards are the lazy answer and these are data. */
   .spec-row {
     display: grid;
     gap: 0.5rem 3rem;
@@ -162,29 +181,61 @@
     border-top: 1px solid var(--color-rule);
   }
   @media (min-width: 48rem) {
-    .spec-row { grid-template-columns: minmax(0, 11rem) minmax(0, 1fr); }
+    .spec-row { grid-template-columns: minmax(0, 10rem) minmax(0, 1fr); }
+    /* The work rows lead with a subhead, not a mono label, and a subhead
+       needs more column than a label: at 10rem "Visual editors and theme
+       systems" sets in three lines against a two-line value. */
+    #work .spec-row { grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); }
   }
 
   .chip {
     display: inline-flex;
     align-items: center;
     min-height: 2rem;
-    padding-inline: 0.75rem;
+    padding-inline: 0.6875rem;
     border: 1px solid var(--color-rule-strong);
-    border-radius: 1rem;
+    border-radius: 0.375rem;
     font-family: var(--font-mono);
     font-size: 0.8125rem;
     color: var(--color-ink);
+    background: var(--color-bg);
   }
 
-  /* The legend dot in the hero nav. Redundant with the written name, never a
-     substitute for it. */
-  .dot {
-    inline-size: 0.6875rem;
-    block-size: 0.6875rem;
-    border-radius: 50%;
-    flex: none;
-    background: var(--dot);
+  /* The table of contents is set like the sheet's own index: label, dot
+     leader, position. The leader is a baseline of dots, not a rule, so the eye
+     travels without the row reading as a box. */
+  .toc {
+    display: flex;
+    align-items: baseline;
+    gap: 0.875rem;
+    width: 100%;
+    padding-block: 0.75rem;
+    min-height: 2.75rem;
+  }
+  .toc-leader {
+    flex: 1;
+    min-width: 2rem;
+    background-image: radial-gradient(circle, var(--color-rule-strong) 1px, transparent 1.5px);
+    background-size: 8px 2px;
+    background-position: bottom 0.2em left;
+    background-repeat: repeat-x;
+    height: 1em;
+    transition: background-image 180ms var(--ease-out);
+  }
+  .toc-num {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-muted);
+    transition: color 180ms var(--ease-out);
+  }
+  /* Constant weight, so activation changes colour and nothing reflows: a row
+     that gains weight when it becomes current pushes its own leader around. */
+  .toc-label { font-weight: 500; transition: color 180ms var(--ease-out); }
+  .toc[aria-current] .toc-label { color: var(--color-accent); }
+  .toc[aria-current] .toc-num { color: var(--color-accent); }
+  .toc[aria-current] .toc-leader {
+    background-image: radial-gradient(circle, var(--color-accent) 1px, transparent 1.5px);
   }
 
   /* Every pressable thing. 44px minimum, and it presses. */
@@ -195,72 +246,98 @@
     gap: 0.625rem;
     transition: translate 180ms var(--ease-out), scale 140ms var(--ease-out),
                 color 180ms var(--ease-out), border-color 180ms var(--ease-out),
+                background-color 180ms var(--ease-out),
                 text-decoration-color 180ms var(--ease-out);
     touch-action: manipulation;
   }
   .press:active { scale: 0.97; }
-  @media (hover: hover) and (pointer: fine) {
-    .press:hover { translate: 0 -2px; }
-  }
 
   .link {
     text-decoration: underline;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 0.45em;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 0.35em;
     text-decoration-color: var(--color-rule-strong);
   }
   @media (hover: hover) and (pointer: fine) {
-    .link:hover { text-decoration-color: var(--accent); }
+    .link:hover { text-decoration-color: var(--color-accent); color: var(--color-accent); }
   }
 
   .solid {
-    background: var(--accent);
-    color: var(--color-void);
+    background: var(--color-ink);
+    color: var(--color-bg);
     padding-inline: 1.5rem;
+    border-radius: 0.375rem;
     font-family: var(--font-mono);
     font-size: 0.8125rem;
     font-weight: 500;
     letter-spacing: 0.06em;
-    transition: background 260ms var(--ease-out), translate 180ms var(--ease-out),
-                scale 140ms var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .solid:hover { background: var(--color-accent); }
   }
 
-  /* The canvas. Fixed and full frame from lg up, with the machine composed in
-     the right 45% and the reading column clear of it. Below that it is a
-     sticky panel and the document flows underneath, so no text ever sits over
-     the scene and no scrim is needed to win the contrast back. */
-  .stage {
-    display: block;
-    inline-size: 100%;
-    block-size: 42svh;
-    position: sticky;
-    inset-block-start: 0;
-    /* Above the document on small screens, so the text slides UNDER the panel
-       instead of over the machine. The canvas paints its own --void, so the
-       text disappears cleanly at the boundary and no scrim is needed. */
+  /* The advance control is a key, and a key has travel: two millimetres of
+     shadow under the cap, spent on press. Faster than the generic press,
+     because a key that lags its own click feels broken. */
+  .key {
+    min-height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding-inline: 1.125rem;
+    border: 1px solid var(--color-rule-strong);
+    border-radius: 0.5rem;
+    background: var(--color-bg);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--color-ink);
+    box-shadow: 0 2px 0 var(--color-rule-strong);
+    transition: translate 110ms var(--ease-out), box-shadow 110ms var(--ease-out),
+                border-color 180ms var(--ease-out);
+    touch-action: manipulation;
+  }
+  .key:active { translate: 0 2px; box-shadow: 0 0 0 var(--color-rule-strong); }
+  @media (hover: hover) and (pointer: fine) {
+    .key:hover { border-color: var(--color-ink); box-shadow: 0 2px 0 var(--color-ink); }
+    .key:hover:active { box-shadow: 0 0 0 var(--color-ink); }
+  }
+
+  /* The counter rail. An instrument, not navigation: aria-hidden, never
+     focusable, and the readout snaps because a smoothed gauge reports a
+     position you are not in. */
+  .rail {
+    position: fixed;
+    right: 1.5rem;
+    top: 50%;
+    translate: 0 -50%;
     z-index: var(--z-sticky);
-    background: var(--color-void);
+    display: none;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.625rem;
   }
-  @media (min-width: 64rem) {
-    .stage {
-      position: fixed;
-      inset: 0;
-      block-size: 100svh;
-      inline-size: 100vw;
-      /* Behind the document from lg up, where the machine lives in the right
-         45% and the reading column has the left to itself. */
-      z-index: var(--z-scene);
-    }
+  @media (min-width: 64rem) { .rail { display: flex; } }
+  .rail-tick {
+    width: 1rem;
+    height: 2px;
+    background: var(--color-rule-strong);
+    transition: width 200ms var(--ease-out), background-color 200ms var(--ease-out);
   }
-
-  /* The counter. An instrument, so it is never interpolated: a smoothed readout
-     reports a position you are not in, and keeps reporting it after you stop. */
+  .rail-tick[data-on] { width: 1.75rem; background: var(--color-accent); }
   .counter {
     font-family: var(--font-mono);
     font-size: 0.8125rem;
     font-variant-numeric: tabular-nums;
     color: var(--color-muted);
+    margin-top: 0.25rem;
+    transition: color 200ms var(--ease-out);
   }
+  /* The rail floats over whatever section is current. Over the plate its
+     white-page greys disappear into the petrol, so the readout restates
+     itself in the plate's own palette. */
+  [data-section="contact"] .rail-tick { background: var(--color-plate-rule); }
+  [data-section="contact"] .rail-tick[data-on] { background: var(--color-plate-ink); }
+  [data-section="contact"] .counter { color: var(--color-plate-muted); }
 
   .copy {
     min-height: 2.75rem;
@@ -272,6 +349,7 @@
     font-family: var(--font-mono);
     font-size: 0.8125rem;
     color: var(--color-muted);
+    background: transparent;
     transition: color 200ms var(--ease-out), border-color 200ms var(--ease-out),
                 scale 140ms var(--ease-out);
     touch-action: manipulation;
@@ -285,7 +363,24 @@
   .copy [data-done] { opacity: 0; filter: blur(3px); transition-duration: 140ms; }
   .copy[data-state="done"] [data-idle] { opacity: 0; filter: blur(3px); transition-duration: 140ms; }
   .copy[data-state="done"] [data-done] { opacity: 1; filter: blur(0); }
-  .copy[data-state="done"] { color: var(--accent); border-color: var(--accent); }
+  .copy[data-state="done"] { color: var(--color-accent); border-color: var(--color-accent); }
+
+  /* The closing plate. The one surface made of the accent, so every colour on
+     it is restated against the plate instead of inheriting a white-page value
+     that no longer contrasts. */
+  .plate {
+    background: var(--color-plate);
+    color: var(--color-plate-ink);
+  }
+  .plate ::selection { background: var(--color-plate-ink); color: var(--color-plate); }
+  .plate :focus-visible { outline-color: var(--color-plate-ink); }
+  .plate .mono, .plate .counter { color: var(--color-plate-muted); }
+  .plate .link { text-decoration-color: var(--color-plate-rule); }
+  @media (hover: hover) and (pointer: fine) {
+    .plate .link:hover { text-decoration-color: var(--color-plate-ink); color: var(--color-plate-ink); }
+  }
+  .plate .copy { color: var(--color-plate-muted); border-color: var(--color-plate-rule); }
+  .plate .copy[data-state="done"] { color: var(--color-plate-ink); border-color: var(--color-plate-ink); }
 }
 
 @layer utilities {
@@ -308,25 +403,22 @@
      the one moment this page performs, and it is performed with the material
      the whole typography is built on rather than with an effect bolted on top.
 
-     The end value is stepped rather than continuous, and that is a real
-     compromise worth naming. font-optical-sizing is auto by default, so the
-     browser normally feeds the used size straight to the axis. Writing
-     font-variation-settings overrides that, so the animation has to land on a
-     number. Reverting to auto at the end would snap: 96 to 44 on a phone is
-     visible. Stepping the landing value at the same breakpoints the clamp
-     crosses keeps the axis within a few units of the size actually rendered. */
+     The end value is stepped rather than continuous: writing
+     font-variation-settings overrides the automatic optical axis, so the
+     animation has to land on a number, and the number steps at the same
+     breakpoints the clamp crosses to stay within a few units of the size
+     actually rendered. */
   .js .name {
-    --opsz-end: 44;
+    --opsz-end: 52;
     font-variation-settings: "opsz" 12;
     animation: settle 620ms var(--ease-out) both;
   }
-  @media (min-width: 40rem) { .js .name { --opsz-end: 64; } }
-  @media (min-width: 64rem) { .js .name { --opsz-end: 88; } }
+  @media (min-width: 40rem) { .js .name { --opsz-end: 80; } }
+  @media (min-width: 52rem) { .js .name { --opsz-end: 96; } }
   @keyframes settle { to { font-variation-settings: "opsz" var(--opsz-end); } }
 
   /* Reduced motion removes movement and keeps opacity and colour, which is the
-     part that aids comprehension. The machine is separately switched to a still
-     life by machine/index.js rather than animated slowly. */
+     part that aids comprehension. */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
@@ -334,5 +426,13 @@
       transition-property: opacity, color, background-color, border-color, text-decoration-color !important;
       transition-duration: 160ms !important;
     }
+  }
+
+  /* On paper the page is a document: no rail, no keys, no drench, and the
+     address is printed in full because a sheet cannot be clicked. */
+  @media print {
+    .rail, .key, .copy { display: none !important; }
+    .plate { background: none; color: var(--color-ink); }
+    .plate .mono, .plate .counter { color: var(--color-muted); }
   }
 }

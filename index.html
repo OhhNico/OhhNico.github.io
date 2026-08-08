@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#08080B">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#ffffff">
 <title>Nicolò Rengifo, full-stack web developer</title>
 <meta name="description" content="Full-stack web developer building multi-tenant web platforms with Laravel and Vue. Based in Legnano, Italy.">
 <link rel="icon" href="data:,">
@@ -21,57 +21,61 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentEl
 </head>
 <body>
 
-<a class="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-40 focus-visible:bg-ink focus-visible:px-4 focus-visible:py-3 focus-visible:font-mono focus-visible:text-[0.8125rem] focus-visible:text-void" href="#work">Skip to content</a>
+<a class="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-40 focus-visible:bg-ink focus-visible:px-4 focus-visible:py-3 focus-visible:font-mono focus-visible:text-[0.8125rem] focus-visible:text-bg" href="#work">Skip to content</a>
 
-<!-- The machine. A backdrop in the DOM sense only: it carries no content, no
-     text and no control, so it is invisible to assistive tech and to keyboard
-     focus. Everything it represents exists in HTML above it. If the module never
-     runs this stays an empty box painted --void, and the page is the page. -->
-<canvas id="scene" class="stage" aria-hidden="true"></canvas>
+<!-- The position readout. An instrument, not navigation: it duplicates what
+     the nav already says, in a worse form, so it is hidden from assistive tech
+     and can never take focus. -->
+<aside class="rail" aria-hidden="true">
+  <span class="rail-tick" data-on></span>
+  <span class="rail-tick"></span>
+  <span class="rail-tick"></span>
+  <span class="rail-tick"></span>
+  <span class="rail-tick"></span>
+  <span class="rail-tick"></span>
+  <p class="counter"><span data-counter>1</span> / 6</p>
+</aside>
 
-<!-- Duplicates what the nav already says, in a worse form, so it is hidden from
-     assistive tech. It is the machine's readout, not information. -->
-<p class="counter fixed bottom-6 right-6 z-30 hidden lg:block" aria-hidden="true"><span data-counter>1</span> / 6</p>
-
-<div class="relative z-10">
-
-<header id="top" class="shell" data-section-index="0">
-  <div class="lg:w-[54%]">
+<header id="top" data-section-index="0">
+  <div class="shell">
 
     <div class="rise flex flex-wrap items-baseline justify-between gap-x-8 gap-y-1 border-b border-rule pt-6 pb-5 sm:pt-8">
-      <p class="mono text-ink">Full-stack web developer</p>
+      <p class="mono">Full-stack web developer</p>
       <p class="mono text-muted">Legnano, Italy</p>
     </div>
 
     <div class="py-[clamp(3.5rem,9vw,6.5rem)]">
-      <h1 class="rise name display" style="animation-delay:60ms"><span class="block">Nicolò</span><span class="block">Rengifo</span></h1>
+      <div class="rise inline-block" style="animation-delay:60ms">
+        <h1 class="name display"><span class="block">Nicolò</span><span class="block">Rengifo</span></h1>
+        <!-- The sheet annotating its own artwork: the size below is the rule
+             that draws the name above it. Decorative and true. -->
+        <p class="dim hidden md:block" aria-hidden="true">clamp(3.25rem, 11.5vw, 6rem) wght 750</p>
+      </div>
 
       <p class="rise mt-[clamp(2rem,4vw,3rem)] max-w-[64ch] text-[clamp(1.125rem,1.7vw,1.375rem)] leading-[1.5] tracking-[-0.012em]" style="animation-delay:140ms">I build multi-tenant web platforms: backend, visual editor, theme system, deploy. Working on the web since 2020, mostly PHP and Vue. Lately a lot of my time goes to AI tooling and automation.</p>
 
-      <div class="rise mt-[clamp(2.25rem,4vw,3rem)] flex flex-wrap items-center gap-x-7 gap-y-2" style="animation-delay:200ms">
+      <div class="rise mt-[clamp(2.25rem,4vw,3rem)] flex flex-wrap items-center gap-x-6 gap-y-2" style="animation-delay:200ms">
         <a class="press solid" href="mailto:nicogifo2000@gmail.com">Email</a>
         <a class="press link mono" href="https://www.linkedin.com/in/nicol%C3%B2rengifo/" rel="me">LinkedIn</a>
         <a class="press link mono" href="https://github.com/OhhNico" rel="me">GitHub</a>
       </div>
 
-      <!-- The navigation, and the legend for the six capsules. The capsules
-           themselves live inside an aria-hidden canvas, so they are not
-           navigation and cannot be: this is. Each dot repeats what its label
-           already says and never replaces it. -->
+      <!-- The sheet's own index: label, dot leader, position. The numbers are
+           the same ones the rail counts, and the current row is the one place
+           outside the plate where the accent stands still. -->
       <nav class="rise mt-[clamp(2.75rem,6vw,4.5rem)]" aria-label="Sections" style="animation-delay:260ms">
         <ol class="border-t border-rule">
-          <li><a class="press link flex w-full items-center border-b border-rule py-3" href="#top"><span class="dot" style="--dot:var(--color-c1)"></span><span>Intro</span></a></li>
-          <li><a class="press link flex w-full items-center border-b border-rule py-3" href="#work"><span class="dot" style="--dot:var(--color-c2)"></span><span>What I work on</span></a></li>
-          <li><a class="press link flex w-full items-center border-b border-rule py-3" href="#stack"><span class="dot" style="--dot:var(--color-c3)"></span><span>Stack</span></a></li>
-          <li><a class="press link flex w-full items-center border-b border-rule py-3" href="#experience"><span class="dot" style="--dot:var(--color-c4)"></span><span>Experience</span></a></li>
-          <li><a class="press link flex w-full items-center border-b border-rule py-3" href="#currently"><span class="dot" style="--dot:var(--color-c5)"></span><span>Currently</span></a></li>
-          <li><a class="press link flex w-full items-center border-b border-rule py-3" href="#contact"><span class="dot" style="--dot:var(--color-c6)"></span><span>Contact</span></a></li>
+          <li><a class="press toc border-b border-rule" href="#top"><span class="toc-label">Intro</span><span class="toc-leader" aria-hidden="true"></span><span class="toc-num" aria-hidden="true">1</span></a></li>
+          <li><a class="press toc border-b border-rule" href="#work"><span class="toc-label">What I work on</span><span class="toc-leader" aria-hidden="true"></span><span class="toc-num" aria-hidden="true">2</span></a></li>
+          <li><a class="press toc border-b border-rule" href="#stack"><span class="toc-label">Stack</span><span class="toc-leader" aria-hidden="true"></span><span class="toc-num" aria-hidden="true">3</span></a></li>
+          <li><a class="press toc border-b border-rule" href="#experience"><span class="toc-label">Experience</span><span class="toc-leader" aria-hidden="true"></span><span class="toc-num" aria-hidden="true">4</span></a></li>
+          <li><a class="press toc border-b border-rule" href="#currently"><span class="toc-label">Currently</span><span class="toc-leader" aria-hidden="true"></span><span class="toc-num" aria-hidden="true">5</span></a></li>
+          <li><a class="press toc border-b border-rule" href="#contact"><span class="toc-label">Contact</span><span class="toc-leader" aria-hidden="true"></span><span class="toc-num" aria-hidden="true">6</span></a></li>
         </ol>
 
-        <!-- The real control. The lever in the scene is its shortcut, and
-             focusing this lights that lever, so the focus state exists in both
-             places instead of vanishing at the edge of the canvas. -->
-        <button class="press link mono mt-6" type="button" data-advance>Next section</button>
+        <!-- The real control. The rail is its readout, and this key is the only
+             thing on the page with travel: two millimetres, spent on press. -->
+        <button class="key mt-6" type="button" data-advance>Next section</button>
       </nav>
     </div>
   </div>
@@ -79,9 +83,9 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentEl
 
 <main>
 
-  <section id="work" class="shell" data-section-index="1">
-    <div class="lg:w-[54%] py-[clamp(3.5rem,8vw,6.5rem)]">
-      <h2 class="heading">What I work on</h2>
+  <section id="work" data-section-index="1">
+    <div class="shell py-[clamp(3rem,7vw,5.5rem)]">
+      <h2 class="heading" tabindex="-1">What I work on</h2>
       <ul role="list" class="mt-[clamp(2rem,4vw,3.25rem)] border-b border-rule">
         <li class="spec-row">
           <h3 class="subhead">Multi-tenant SaaS</h3>
@@ -103,9 +107,9 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentEl
     </div>
   </section>
 
-  <section id="stack" class="shell" data-section-index="2">
-    <div class="lg:w-[54%] py-[clamp(3.5rem,8vw,6.5rem)]">
-      <h2 class="heading">Stack</h2>
+  <section id="stack" data-section-index="2">
+    <div class="shell py-[clamp(3rem,7vw,5.5rem)]">
+      <h2 class="heading" tabindex="-1">Stack</h2>
       <dl class="mt-[clamp(2rem,4vw,3.25rem)] border-b border-rule">
         <div class="spec-row">
           <dt class="mono pt-1.5 text-muted">Backend</dt>
@@ -127,9 +131,9 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentEl
     </div>
   </section>
 
-  <section id="experience" class="shell" data-section-index="3">
-    <div class="lg:w-[54%] py-[clamp(3.5rem,8vw,6.5rem)]">
-      <h2 class="heading">Experience</h2>
+  <section id="experience" data-section-index="3">
+    <div class="shell py-[clamp(3rem,7vw,5.5rem)]">
+      <h2 class="heading" tabindex="-1">Experience</h2>
       <ol role="list" class="mt-[clamp(2rem,4vw,3.25rem)] border-b border-rule">
         <li class="spec-row">
           <p class="mono pt-2 text-muted">2024 to now</p>
@@ -149,9 +153,9 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentEl
     </div>
   </section>
 
-  <section id="currently" class="shell" data-section-index="4">
-    <div class="lg:w-[54%] py-[clamp(3.5rem,8vw,6.5rem)]">
-      <h2 class="heading">Currently</h2>
+  <section id="currently" data-section-index="4">
+    <div class="shell py-[clamp(3rem,7vw,5.5rem)]">
+      <h2 class="heading" tabindex="-1">Currently</h2>
       <dl class="mt-[clamp(2rem,4vw,3.25rem)] border-b border-rule">
         <div class="spec-row">
           <dt class="mono pt-1.5 text-muted">learning</dt>
@@ -169,11 +173,11 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentEl
     </div>
   </section>
 
-  <section id="contact" class="shell" data-section-index="5">
-    <div class="lg:w-[54%] pt-[clamp(3.5rem,8vw,6.5rem)] pb-[clamp(3rem,6vw,5rem)]">
-      <h2 class="heading">Contact</h2>
+  <section id="contact" class="plate" data-section-index="5">
+    <div class="shell pt-[clamp(3.5rem,8vw,6.5rem)] pb-[clamp(3rem,6vw,5rem)]">
+      <h2 class="heading" tabindex="-1">Contact</h2>
 
-      <div class="mt-[clamp(2rem,4vw,3.25rem)] flex flex-wrap items-center gap-x-6 gap-y-4 border-t border-rule pt-8">
+      <div class="mt-[clamp(2rem,4vw,3.25rem)] flex flex-wrap items-center gap-x-6 gap-y-4 border-t border-plate-rule pt-8">
         <a class="press link max-w-full [overflow-wrap:anywhere] font-sans text-[clamp(1.25rem,4.5vw,2.25rem)] font-bold leading-[1.15] tracking-[-0.02em] [text-decoration-thickness:0.055em] [text-underline-offset:0.2em]" href="mailto:nicogifo2000@gmail.com">nicogifo2000@gmail.com</a>
         <button class="copy" type="button" data-copy="nicogifo2000@gmail.com" aria-label="Copy email address">
           <span data-idle>Copy</span>
@@ -187,15 +191,14 @@ if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentEl
         <a class="press link mono" href="https://github.com/OhhNico" rel="me">GitHub</a>
       </div>
 
-      <div class="mt-[clamp(3.5rem,7vw,6rem)] flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2 border-t border-rule pt-7">
-        <p class="mono text-muted">Legnano, Italy</p>
-        <p class="mono text-muted">Bricolage Grotesque, Chivo Mono, three.js and GSAP, all served from here.</p>
+      <div class="mt-[clamp(3.5rem,7vw,6rem)] flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2 border-t border-plate-rule pt-7">
+        <p class="mono">Legnano, Italy</p>
+        <p class="mono">Bricolage Grotesque, Chivo Mono, one stylesheet and a kilobyte of script, all served from here.</p>
       </div>
     </div>
   </section>
 
 </main>
-</div>
 
 <script type="module" src="app.js"></script>
 
