@@ -9,8 +9,9 @@
     "build:css": "tailwindcss --input src/input.css --output style.css --minify",
     "build:js": "esbuild src/main.js --bundle --format=esm --target=es2022 --minify --outfile=app.js",
     "dev": "npm run build:css -- --watch & npm run build:js -- --watch --sourcemap",
-    "serve": "python3 -m http.server 4173",
+    "parts": "node tools/build-parts.mjs",
     "refs": "node tools/fetch-refs.mjs",
+    "serve": "python3 -m http.server 4173",
     "verify": "node tools/verify.mjs"
   },
   "devDependencies": {

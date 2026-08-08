@@ -23,7 +23,17 @@ const SLEEP_ENERGY = 1e-5;      // per body, in units squared per second squared
    found. Time is the thing that was meant all along. */
 const SLEEP_SECONDS = 0.4;
 
-export function createSolver({ radius, count, bodyRadius, seed = 0x9e3779b9 }) {
+/* `floorY` is the resting plane in the solver's own frame (origin at the globe
+   centre): the reference machine's gumballs sit on a rest disc, not on the
+   glass. The default keeps the sphere as the only container, which is what the
+   page ships today; nothing changes until a caller passes a floor.
+
+   `spindle` excludes the axis column: {radius, y0, y1} in the same frame. The
+   machine has a threaded spindle down the middle of the globe, and a solver
+   without it lets capsules interpenetrate the rod and stack ON the axis, which
+   is where the settled pile's false peak came from. Off by default for the
+   same reason floorY is. */
+export function createSolver({ radius, count, bodyRadius, seed = 0x9e3779b9, floorY = -Infinity, pour = false, spindle = null }) {
   const pos = new Float32Array(count * 3);
   const prev = new Float32Array(count * 3);
   const active = new Uint8Array(count);   // a body outside the globe is not solved
@@ -31,12 +41,18 @@ export function createSolver({ radius, count, bodyRadius, seed = 0x9e3779b9 }) {
   let rand = seed >>> 0;
   const random = () => ((rand = (rand * 1664525 + 1013904223) >>> 0) / 0xffffffff);
 
-  /* Start them scattered in the upper half, so the first settle looks like
-     capsules that were poured in rather than a lattice relaxing. */
+  /* The comment on this loop always said "scattered in the upper half"; the
+     code sampled the whole sphere. For the page's 44 large capsules the
+     difference is cosmetic. For smaller or more numerous fills it is not:
+     bodies seeded at mid height meet the wall and each other before they meet
+     the pile, freeze into a hoop arch pressed against the glass, and the
+     sleep test correctly reports the arch as settled. `pour: true` makes the
+     code do what the comment said. Kept opt-in so the shipped page's motion
+     does not change without a decision. */
   for (let i = 0; i < count; i++) {
     const r = (radius - bodyRadius) * Math.cbrt(random());
     const theta = random() * Math.PI * 2;
-    const phi = Math.acos(1 - 2 * random());
+    const phi = Math.acos(pour ? random() : 1 - 2 * random());
     const x = r * Math.sin(phi) * Math.cos(theta);
     const y = r * Math.cos(phi);
     const z = r * Math.sin(phi) * Math.sin(theta);
@@ -89,6 +105,35 @@ export function createSolver({ radius, count, bodyRadius, seed = 0x9e3779b9 }) {
       if (len > limit) {
         const k = limit / len;
         pos[a] *= k; pos[a + 1] *= k; pos[a + 2] *= k;
+      }
+      /* Resting on the disc is inelastic: the clamped body's vertical history
+         is rewritten too, or verlet reads the clamp as an upward launch and the
+         pile never sleeps. Measured, not theorised: with the position-only
+         clamp a 44-body fill was still awake after 6000 steps. */
+      const fl = floorY + bodyRadius;
+      if (pos[a + 1] < fl) {
+        pos[a + 1] = fl;
+        if (prev[a + 1] > fl) prev[a + 1] = fl;
+      }
+      if (spindle && pos[a + 1] > spindle.y0 && pos[a + 1] < spindle.y1) {
+        const dxz = Math.hypot(pos[a], pos[a + 2]);
+        const min = spindle.radius + bodyRadius;
+        if (dxz < min && dxz > 1e-9) {
+          const k = min / dxz;
+          pos[a] *= k;
+          pos[a + 2] *= k;
+          /* Same lesson as the floor, radially: a position-only clamp leaves
+             prev inside the column and verlet reads the gap as an outward
+             launch every frame, so a capsule leaning on the spindle jitters
+             forever and the solver never sleeps. Verification check 12 caught
+             it at 0.00s of stillness in 9 seconds. */
+          const pxz = Math.hypot(prev[a], prev[a + 2]);
+          if (pxz < min && pxz > 1e-9) {
+            const kp = min / pxz;
+            prev[a] *= kp;
+            prev[a + 2] *= kp;
+          }
+        }
       }
     }
   }

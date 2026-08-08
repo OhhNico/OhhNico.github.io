@@ -124,6 +124,31 @@ export function makeMaterials(renderer, { cheap }) {
     color: 0xd8dae0, metalness: 1, roughness: 0.14, envMap: env, envMapIntensity: 1.4,
   });
 
+  /* Two metals the reconstruction needs and this page did not have.
+
+     The reference photograph has three distinct metals and the ordering between
+     them is what makes the object read as manufactured rather than moulded: a
+     polished collar, milled bar stock in the lid armature, and one raw sand cast
+     plate on the front. Measured off the reference by
+     forge/stage1_intake/extract_pbr_evidence.py, the roughness ordering is
+     0.08 for the polished ring, 0.30 for the milled stock and 0.62 for the
+     casting, and the casting is the only matte surface anywhere on the object.
+
+     What is NOT carried over is colour. The reference's machine is vivid red in
+     a bright room; this page is a dark room where the globe is the only lamp,
+     and section 4.1 of the design spec governs the palette. So these two take
+     the measured roughness and metalness relationships and the page's values.
+     The measured albedo stays in the sculpt spec as evidence rather than
+     arriving here as a hue nobody asked for. */
+  const milled = new MeshStandardMaterial({
+    color: 0x9aa0a8, metalness: 1, roughness: 0.34,
+    roughnessMap, envMap: env, envMapIntensity: 1.05,
+  });
+
+  const cast = new MeshStandardMaterial({
+    color: 0x5c6068, metalness: 1, roughness: 0.62, envMap: env, envMapIntensity: 0.55,
+  });
+
   const body = new MeshStandardMaterial({
     color: 0x30343f, metalness: 0.55, roughness: 0.42,
     roughnessMap, envMap: env, envMapIntensity: 0.9,
@@ -173,5 +198,5 @@ export function makeMaterials(renderer, { cheap }) {
 
   const sign = (texture) => new MeshBasicMaterial({ map: texture, transparent: true });
 
-  return { env, glass, chrome, body, halo, capsule, sign, cheap };
+  return { env, glass, chrome, milled, cast, body, halo, capsule, sign, cheap };
 }

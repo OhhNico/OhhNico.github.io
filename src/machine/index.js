@@ -16,7 +16,14 @@ import { makeCapsules, LIVE } from "./capsules.js";
 import { createSolver } from "./physics.js";
 import { createDispenser } from "./dispense.js";
 
-const DESKTOP_CAPSULES = 44;
+/* 36, not 44. The reconstruction's silhouette gate measured the settled pile
+   against the reference photograph: 44 of these capsules pour to a peak at
+   0.70 of the object height where the photograph's mass tops out at 0.62, and
+   36 brings the fill to 0.661 and the like-for-like IoU from 0.8410 to 0.8586
+   against the 0.85 gate. Radius stays 0.16 of the globe: the photographic
+   0.120 was tried at four counts and always measured worse, because the
+   solver piles small capsules into steep cones. Owner-approved 2026-08-08. */
+const DESKTOP_CAPSULES = 36;
 const MOBILE_CAPSULES = 18;
 
 export function mount({ canvas, sectionCount, onAdvance }) {
@@ -59,7 +66,19 @@ export function mount({ canvas, sectionCount, onAdvance }) {
   const capsules = makeCapsules(materials, { count, radius: bodyRadius });
   for (const c of capsules.items) scene.add(c.group);
 
-  const solver = createSolver({ radius: sockets.globeRadius, count, bodyRadius });
+  /* pour: seed the fill in the upper hemisphere, which is what this call's
+     comment in physics.js always claimed; the full-sphere scatter left
+     capsules frozen against the mid glass. spindle: the rod down the globe's
+     axis, from the spec via sockets, so capsules stop interpenetrating it and
+     stacking on the axis. Both measured on the silhouette gate, 2026-08-08. */
+  const solver = createSolver({
+    radius: sockets.globeRadius, count, bodyRadius, pour: true,
+    spindle: {
+      radius: sockets.spindle.radius,
+      y0: sockets.spindle.y0 - sockets.globeCentre.y,
+      y1: sockets.spindle.y1 - sockets.globeCentre.y,
+    },
+  });
   const dispenser = createDispenser({
     capsules, sockets, solver, total: count, live: Math.min(LIVE.length, sectionCount),
   });
